@@ -1,0 +1,8 @@
+{
+  "name": "vue-sandbox",
+  "version": "0.0.1",
+  "description": "A sandbox component for developing, testing and documenting other Vue components.",
+  "main": "index.js",
+  "author": "Lin",
+  "license": "MIT"
+}
