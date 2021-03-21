@@ -1,8 +1,32 @@
 {
   "name": "vue-sandbox",
   "version": "0.0.1",
+  "private": true,
   "description": "A sandbox component for developing, testing and documenting other Vue components.",
-  "main": "index.js",
-  "author": "Lin",
+  "author": {
+    "name": "Lin"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "core-js": "^3.6.5",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^6.2.2",
+    "prettier": "^2.2.1",
+    "sass": "^1.32.8",
+    "sass-loader": "^10.1.1",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11"
+  },
   "license": "MIT"
 }
