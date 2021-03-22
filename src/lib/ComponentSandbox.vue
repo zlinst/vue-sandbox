@@ -2,7 +2,7 @@
   <section class="sandbox">
     <div class="sandbox-header">
       <slot name="header">
-        <span class="sandbox-header__title">{{ targetName }}</span>
+        <span class="sandbox-header__title">{{ title }}</span>
         <span class="sandbox-header__actions">
           <button class="sandbox-header__action-btn" @click="reload">
             Reload
@@ -14,8 +14,11 @@
       </slot>
     </div>
 
-    <div class="sandbox-component">
-      <div class="sandbox-component__wrapper">
+    <div class="sandbox-component sandbox-overlay__wrapper">
+      <div
+        class="sandbox-component__wrapper"
+        :style="{ padding: reloading ? '5em 0' : '2em' }"
+      >
         <div
           v-if="!reloading"
           :key="activeId"
@@ -31,24 +34,24 @@
           </slot>
         </div>
       </div>
-      <div v-show="reloading || !ready" class="sandbox__overlay">
+      <div v-show="reloading || !ready" class="sandbox-overlay">
         <slot name="overlay" v-bind="{ reloading, ready }">
-          <div class="sandbox-component__overlay-blur"></div>
-          <div class="sandbox-component__overlay-text">Loading ...</div>
+          <div class="sandbox__overlay-blur"></div>
+          <div class="sandbox-component__loading">Loading ...</div>
         </slot>
       </div>
     </div>
 
-    <div class="sandbox-props">
+    <div v-show="!reloading && ready" class="sandbox-props">
       <div
-        v-for="prop in availableProps"
+        v-for="prop in propsList"
         :key="prop.name"
         :temp="(slotName = 'prop:' + prop.name)"
       >
         <div v-if="$scopedSlots[slotName]">
           <slot :name="slotName" v-bind="{ prop }" />
         </div>
-        <component-prop v-model="prop.value" v-bind="prop" />
+        <component-prop v-model="prop.valueProxy" v-bind="prop" />
       </div>
     </div>
   </section>
@@ -74,7 +77,7 @@ export default {
     },
     reloadDelay: {
       type: Number,
-      default: 800,
+      default: 600,
     },
   },
   data() {
@@ -86,6 +89,8 @@ export default {
 
       // Vue instance of the target component
       target: undefined,
+      // list of prop object to be shown
+      propsList: [],
       // the actual props to be binded on the target component
       propsData: undefined,
 
@@ -97,19 +102,21 @@ export default {
     reloading() {
       return this.targetId !== this.activeId
     },
+    title() {
+      if (this.reloading || !this.ready) return 'Loading ...'
+      return this.targetName
+    },
     /**
      * Vue $options of the target component.
      */
     targetOptions() {
-      if (!this.target) return {}
-      return this.target.__proto__.constructor.extendOptions
+      return this.target ? this.target.__proto__.constructor.extendOptions : {}
     },
     /**
      * Name of the target component (if available).
      */
     targetName() {
-      if (this.reloading || !this.ready) return '[ Loading ... ]'
-      if (!this.target) return '[ Component Not Found ]'
+      if (!this.target) return '[Not Found]'
 
       // return the name if defined in $options
       if (this.targetOptions.name) {
@@ -127,10 +134,10 @@ export default {
         }
       }
 
-      return '[ Anonymous Component ]'
+      return '[Anonymous Component]'
     },
     /**
-     * v-model *definition* of target component.
+     * model *definition* of target component.
      */
     targetModel() {
       if (!this.target) return {}
@@ -164,61 +171,24 @@ export default {
       return targetProps
     },
     /**
-     * List of props to be shown.
-     */
-    availableProps() {
-      if (!this.target) return []
-
-      const availableProps = []
-      for (let propName in this.targetProps) {
-        availableProps.push({
-          name: propName,
-          type: undefined,
-          isModel: propName === this.targetModel.prop,
-          // allows prop definition override
-          ...this.targetProps[propName],
-          ...(this.props[propName] || {}),
-        })
-      }
-
-      // include unlisted props from user, useful if target component uses $attrs
-      for (let propName in this.props) {
-        if (this.targetProps[propName] || !this.props[propName]) {
-          return
-        }
-
-        availableProps.push({
-          name: propName,
-          type: undefined,
-          unlisted: true,
-          isModel: propName === this.targetModel.prop,
-          ...this.props[propName],
-        })
-      }
-
-      // add v-model support
-      availableProps.forEach((prop) => {
-        Object.defineProperty(prop, 'value', {
-          get: () => {
-            return this.propsData[prop.name]
-          },
-          set: (value) => {
-            this.propsData[prop.name] = value
-          },
-        })
-      })
-
-      return availableProps
-    },
-    /**
      * The event listeners to be binded on the target component.
      */
     eventsData() {
-      const activeId = this.activeId
+      const modelProp = this.propsList.find((prop) => prop.isModel)
       return {
+        // triggered when:
+        //  * loaded for the first time
+        //  * manually reloaded
+        //  * automatically hot-reload by Vue
         'hook:beforeCreate': () => {
-          this.ready = false
           this.setup()
+        },
+        // tracking v-model prop (even when there is v-model support, but should have no
+        // side-effect)
+        [this.targetModel.event || 'input']: (value) => {
+          if (modelProp) {
+            modelProp.valueProxy = value
+          }
         },
       }
     },
@@ -243,11 +213,71 @@ export default {
         return
       }
 
+      this.buildPropsList()
       this.setupPropsData()
+
       this.ready = true
     },
+    /**
+     * Collect all the prop entries.
+     *
+     * NOTE: we could use computed property for this, but the Vue reactivity is too senstive that
+     * changing this.activeId and this.target will cause the computed property to be evaluated
+     * multiple times during a single reload.
+     */
+    buildPropsList() {
+      this.propsList = []
+
+      // loop prop from props definitions
+      for (let propName in this.targetProps) {
+        this.propsList.push({
+          name: propName,
+          type: undefined,
+          isModel: propName === this.targetModel.prop,
+          ...this.targetProps[propName],
+          // allows override
+          ...(this.props[propName] || {}),
+        })
+      }
+
+      // search for unlisted props, useful if target component uses $attrs
+      for (let propName in this.props) {
+        if (this.targetProps[propName] || !this.props[propName]) {
+          return
+        }
+
+        this.propsList.push({
+          name: propName,
+          type: undefined,
+          unlisted: true,
+          isModel: propName === this.targetModel.prop,
+          ...this.props[propName],
+        })
+      }
+
+      const activeId = this.activeId
+
+      // add a proxy property for v-model support
+      this.propsList.forEach((prop) => {
+        Object.defineProperty(prop, 'valueProxy', {
+          get: () => {
+            return this.propsData[prop.name]
+          },
+          set: (value) => {
+            if (activeId !== this.targetId) {
+              // ignores updates from destroyed component
+              return
+            }
+            this.propsData[prop.name] = value
+          },
+        })
+      })
+    },
+    /**
+     * Set the default values of the props.
+     */
     setupPropsData() {
-      this.availableProps.forEach((prop) => {
+      this.propsList.forEach((prop) => {
         if (has(this.propsData, prop.name)) return
 
         if (has(prop, 'default')) {
@@ -257,20 +287,30 @@ export default {
         }
       })
     },
+    /**
+     * Clear values of the props.
+     */
     resetPropsData() {
       this.propsData = { __sandboxed: true }
     },
+    /**
+     * Re-mount the component without clearing the props data.
+     */
     reload() {
       const targetId = ++this.targetId
       // add a small deply to make the process more responsive
       this.$nextTick(() =>
         setTimeout(() => {
+          // in case a new reload is issued
           if (targetId === this.targetId) {
             this.activeId = targetId
           }
         }, this.reloadDelay)
       )
     },
+    /**
+     * Re-mount the component and clear everything.
+     */
     reset() {
       this.reload()
       this.resetPropsData()
@@ -301,12 +341,11 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.sandbox {
-  border-radius: 0.2em;
-  box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.2);
+.sandbox-overlay__wrapper {
+  position: relative;
 }
 
-.sandbox__overlay {
+.sandbox-overlay {
   position: absolute;
   inset: 0;
   z-index: 10;
@@ -315,6 +354,22 @@ export default {
     position: absolute;
     inset: 0;
   }
+}
+
+.sandbox__overlay-blur {
+  opacity: 0.5;
+  background-color: #888;
+}
+
+@supports (backdrop-filter: blur(2px)) {
+  .sandbox__overlay-blur {
+    backdrop-filter: blur(2px);
+  }
+}
+
+.sandbox {
+  border-radius: 0.2em;
+  box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.2);
 }
 
 .sandbox-header {
@@ -343,20 +398,12 @@ export default {
   margin-right: 0.25em;
 }
 
-.sandbox-component {
-  position: relative;
-}
-
-.sandbox-component__overlay-blur {
-  opacity: 0.75;
-  backdrop-filter: blur(5px);
-}
-
-.sandbox-component__overlay-text {
+.sandbox-component__loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 10em;
 }
 
 .sandbox-component__wrapper {
