@@ -1,5 +1,7 @@
 <template>
-  <div class="input-unknown">This prop does not support editting.</div>
+  <div class="input-unknown">
+    Unknown prop type, you can add custom prop input for it.
+  </div>
 </template>
 
 <style lang="scss" scoped>
