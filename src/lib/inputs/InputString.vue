@@ -1,10 +1,6 @@
 <template>
   <div class="input-string">
-    <input
-      type="text"
-      :value="value"
-      @input="(e) => $emit('input', e.target.value)"
-    />
+    <input type="text" :value="value" @input="update" />
   </div>
 </template>
 
@@ -16,6 +12,11 @@ export default {
       default: undefined,
     },
   },
+  methods: {
+    update(e) {
+      this.$emit('input', e.target.value)
+    },
+  },
 }
 </script>
 
@@ -25,6 +26,7 @@ export default {
   font-size: 1rem;
   line-height: 1.5;
   display: block;
+  box-sizing: border-box;
   width: 100%;
 }
 </style>
