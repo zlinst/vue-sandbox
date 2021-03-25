@@ -14,14 +14,13 @@
       </slot>
     </div>
 
-    <div class="sandbox-component sandbox-overlay__wrapper">
-      <div
-        class="sandbox-component__wrapper"
-        :style="{ padding: reloading ? '5em 0' : '2em' }"
-      >
+    <div class="sandbox-body">
+      <!-- target component -->
+      <div class="sandbox-component">
         <div
           v-if="!reloading"
           :key="activeId"
+          class="sandbox-component__wrapper"
           :style="{ visibility: ready ? 'visible' : 'hidden' }"
         >
           <slot v-bind="{ propsData, eventsData }">
@@ -34,25 +33,21 @@
           </slot>
         </div>
       </div>
-      <div v-show="reloading || !ready" class="sandbox-overlay">
-        <slot name="overlay" v-bind="{ reloading, ready }">
-          <div class="sandbox__overlay-blur"></div>
-          <div class="sandbox-component__loading">Loading ...</div>
-        </slot>
-      </div>
-    </div>
-
-    <div v-show="!reloading && ready" class="sandbox-props">
-      <div
-        v-for="prop in propsList"
-        :key="prop.name"
-        :temp="(slotName = 'prop:' + prop.name)"
-      >
-        <div v-if="$scopedSlots[slotName]">
-          <slot :name="slotName" v-bind="{ prop }" />
+      <!-- props of target component -->
+      <div class="sandbox-props">
+        <div
+          v-for="prop in propsList"
+          :key="prop.name"
+          :temp="(slotName = 'prop:' + prop.name)"
+        >
+          <div v-if="$scopedSlots[slotName]">
+            <slot :name="slotName" v-bind="{ prop }" />
+          </div>
+          <component-prop v-model="prop.valueProxy" v-bind="prop" />
         </div>
-        <component-prop v-model="prop.valueProxy" v-bind="prop" />
       </div>
+      <!-- loading overlay -->
+      <div v-show="reloading || !ready" class="sandbox-overlay"></div>
     </div>
   </section>
 </template>
@@ -341,32 +336,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.sandbox-overlay__wrapper {
-  position: relative;
-}
-
-.sandbox-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-
-  & > * {
-    position: absolute;
-    inset: 0;
-  }
-}
-
-.sandbox__overlay-blur {
-  opacity: 0.5;
-  background-color: #888;
-}
-
-@supports (backdrop-filter: blur(2px)) {
-  .sandbox__overlay-blur {
-    backdrop-filter: blur(2px);
-  }
-}
-
 .sandbox {
   border-radius: 0.2em;
   box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.2);
@@ -398,16 +367,22 @@ export default {
   margin-right: 0.25em;
 }
 
-.sandbox-component__loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 10em;
+.sandbox-body {
+  position: relative;
 }
 
-.sandbox-component__wrapper {
-  padding: 1em;
+.sandbox-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+
+  background-color: #555;
+  opacity: 0.75;
+  // backdrop-filter: blur(2px);
+}
+
+.sandbox-component {
+  padding: 2em;
 }
 
 .sandbox-component__wrapper__outlined {

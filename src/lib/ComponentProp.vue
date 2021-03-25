@@ -1,11 +1,15 @@
 <template>
   <section class="sandbox-prop">
     <div class="sandbox-prop__header">
-      <badge class="sandbox-monofont">{{ name }}</badge>
+      <badge class="sandbox-prop__name sandbox-monofont">{{ name }}</badge>
     </div>
     <div class="sandbox-prop__input">
       <slot v-bind="{ valueProxy }">
-        <component :is="inputComponent" v-model="valueProxy" />
+        <component
+          :is="inputComponent"
+          v-if="inputComponent"
+          v-model="valueProxy"
+        />
       </slot>
     </div>
   </section>
@@ -13,7 +17,8 @@
 
 <script>
 import Badge from './misc/Badge.vue'
-import { getInputComponent } from './core.js'
+import { getPropInfo } from './core.js'
+import { isArray } from './utils.js'
 
 export default {
   components: {
@@ -29,7 +34,7 @@ export default {
       required: true,
     },
     type: {
-      type: [Function, Object, Array],
+      type: [Function, Array, String],
       default: undefined,
     },
     isModel: {
@@ -49,6 +54,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      typeIndex: 0,
+    }
+  },
   computed: {
     valueProxy: {
       get() {
@@ -58,15 +68,15 @@ export default {
         this.$emit('input', value)
       },
     },
-    flattenType() {
-      if (!this.type) return 'any'
-      if (typeof this.type.name === 'string') {
-        return this.type.name.toLowerCase()
+    typeList() {
+      if (isArray(this.type)) {
+        return this.type.map((t) => getPropInfo(t))
       }
-      return '*'
+
+      return [getPropInfo(this.type)]
     },
     inputComponent() {
-      return getInputComponent(this.flattenType)
+      return this.typeList[this.typeIndex]?.component
     },
   },
 }
@@ -76,6 +86,10 @@ export default {
 .sandbox-prop {
   padding: 0.75em;
   border-top: 1px solid #dae6ef;
+}
+
+.sandbox-prop__name {
+  background-color: #264b6d;
 }
 
 .sandbox-prop__input {
