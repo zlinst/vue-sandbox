@@ -1,17 +1,13 @@
 <template>
   <section class="sandbox">
     <div class="sandbox-header">
-      <slot name="header">
-        <span class="sandbox-header__title">{{ title }}</span>
-        <span class="sandbox-header__actions">
-          <button class="sandbox-header__action-btn" @click="reload">
-            Reload
-          </button>
-          <button class="sandbox-header__action-btn" @click="reset">
-            Reset
-          </button>
-        </span>
-      </slot>
+      <span class="sandbox-header__title">{{ title }}</span>
+      <span class="sandbox-header__actions">
+        <button class="sandbox-header__action-btn" @click="reload">
+          Reload
+        </button>
+        <button class="sandbox-header__action-btn" @click="reset">Reset</button>
+      </span>
     </div>
 
     <div class="sandbox-component">
