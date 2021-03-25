@@ -1,10 +1,20 @@
 <template>
   <section class="sandbox-prop">
     <div class="sandbox-prop__header">
-      <badge class="sandbox-prop__name sandbox-monofont">{{ name }}</badge>
+      <badge class="sandbox-prop__name-badge sandbox-monofont" v-text="name" />
+      <div class="sandbox-prop__type-badges">
+        <badge
+          v-for="(typeInfo, index) in typeList"
+          :key="index"
+          class="sandbox-prop__type-badge"
+          size="sm"
+        >
+          {{ typeInfo.name }}
+        </badge>
+      </div>
     </div>
     <div class="sandbox-prop__input">
-      <slot v-bind="{ valueProxy }">
+      <slot v-bind="{ valueProxy, $attrs }">
         <component
           :is="inputComponent"
           v-if="inputComponent"
@@ -83,13 +93,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sandbox-prop {
-  padding: 0.75em;
-  border-top: 1px solid #dae6ef;
+.sandbox-prop__header {
+  display: flex;
+  align-items: center;
 }
 
-.sandbox-prop__name {
+.sandbox-prop__name-badge {
   background-color: #264b6d;
+}
+
+.sandbox-prop__type-badges {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.sandbox-prop__type-badge {
+  margin: 0.15em;
+  cursor: pointer;
 }
 
 .sandbox-prop__input {

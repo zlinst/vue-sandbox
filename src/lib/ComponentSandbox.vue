@@ -1,5 +1,6 @@
 <template>
   <section class="sandbox">
+    <!-- header -->
     <div class="sandbox-header">
       <span class="sandbox-header__title">{{ title }}</span>
       <span class="sandbox-header__actions">
@@ -40,6 +41,7 @@
           v-for="prop in propsList"
           :key="prop.name"
           :temp="(slotName = 'prop:' + prop.name)"
+          class="sandbox-component__prop"
         >
           <div v-if="$scopedSlots[slotName]">
             <slot :name="slotName" v-bind="{ prop }" />
@@ -409,6 +411,11 @@ export default {
 
 .sandbox-component__props {
   background-color: #f4faff;
+}
+
+.sandbox-component__prop {
+  padding: 0.75em;
+  border-top: 1px solid #dae6ef;
 }
 
 // overlay effect
