@@ -1,18 +1,19 @@
 /**
- * Convert Vue prop type (e.g. String, Boolean etc) to lowercased string name for type checking.
+ * Convert Vue prop type (e.g. String, Boolean etc) to string for type checking.
  */
 export const parsePropType = (propType) => {
   if (typeof propType === 'function') {
-    return propType.name.toLowerCase()
+    return propType.name
   } else if (typeof propType === 'string') {
-    return propType.toLocaleLowerCase()
+    return propType
   } else {
     return null
   }
 }
 
 export const getPropInfo = (propType) => {
-  switch (parsePropType(propType)) {
+  const propTypeName = parsePropType(propType)
+  switch (propTypeName ? propTypeName.toLowerCase() : propTypeName) {
     case 'string':
       return {
         name: 'String',
@@ -26,7 +27,7 @@ export const getPropInfo = (propType) => {
   }
 
   return {
-    name: 'Unknown',
+    name: propTypeName || 'Unknown',
     component: () => import('./inputs/InputUnknown.vue'),
   }
 }
