@@ -14,13 +14,17 @@
       </slot>
     </div>
 
-    <div class="sandbox-body">
+    <div class="sandbox-component">
       <!-- target component -->
-      <div class="sandbox-component">
+      <div
+        ref="target"
+        class="sandbox-component__target-wrapper"
+        :style="targetStyle"
+      >
         <div
           v-if="!reloading"
           :key="activeId"
-          class="sandbox-component__wrapper"
+          class="sandbox-component__target"
           :style="{ visibility: ready ? 'visible' : 'hidden' }"
         >
           <slot v-bind="{ propsData, eventsData }">
@@ -33,8 +37,9 @@
           </slot>
         </div>
       </div>
+
       <!-- props of target component -->
-      <div class="sandbox-props">
+      <div class="sandbox-component__props">
         <div
           v-for="prop in propsList"
           :key="prop.name"
@@ -46,6 +51,7 @@
           <component-prop v-model="prop.valueProxy" v-bind="prop" />
         </div>
       </div>
+
       <!-- loading overlay -->
       <div v-show="reloading || !ready" class="sandbox-overlay"></div>
     </div>
@@ -91,6 +97,9 @@ export default {
 
       // if the component is ready to be shown
       ready: false,
+
+      // tracks the height of the target component div
+      targetHeight: undefined,
     }
   },
   computed: {
@@ -186,6 +195,15 @@ export default {
           }
         },
       }
+    },
+    targetStyle() {
+      if (this.targetHeight && this.reloading) {
+        return {
+          'min-height': this.targetHeight,
+        }
+      }
+
+      return {}
     },
   },
   watch: {
@@ -292,6 +310,8 @@ export default {
      * Re-mount the component without clearing the props data.
      */
     reload() {
+      // record current height
+      this.targetHeight = this.getTargetHeight()
       const targetId = ++this.targetId
       // add a small deply to make the process more responsive
       this.$nextTick(() =>
@@ -324,6 +344,15 @@ export default {
         const target = this.findTargetComponent(child.$children)
         if (target) return target
       }
+    },
+    /**
+     * Returns the current height of the component target div.
+     */
+    getTargetHeight() {
+      if (!this.$refs.target) return null
+      return window
+        .getComputedStyle(this.$refs.target)
+        .getPropertyValue('height')
     },
   },
 }
@@ -367,29 +396,37 @@ export default {
   margin-right: 0.25em;
 }
 
-.sandbox-body {
+.sandbox-component {
   position: relative;
 }
 
+.sandbox-component__target-wrapper {
+  padding: 2em;
+}
+
+// .sandbox-component__target {
+// }
+
+.sandbox-component__target__outlined {
+  border: 1px dotted #264b6d;
+}
+
+.sandbox-component__props {
+  background-color: #f4faff;
+}
+
+// overlay effect
 .sandbox-overlay {
   position: absolute;
-  inset: 0;
+  // inset: 0; // not supported in IE
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 9;
 
   background-color: #555;
   opacity: 0.75;
   // backdrop-filter: blur(2px);
-}
-
-.sandbox-component {
-  padding: 2em;
-}
-
-.sandbox-component__wrapper__outlined {
-  border: 1px dotted #264b6d;
-}
-
-.sandbox-props {
-  background-color: #f4faff;
 }
 </style>
