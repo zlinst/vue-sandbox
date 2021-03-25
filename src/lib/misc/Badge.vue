@@ -11,10 +11,6 @@ export default {
       type: String,
       default: undefined,
     },
-    variant: {
-      type: String,
-      default: 'primary',
-    },
     size: {
       type: String,
       default: 'md',
@@ -22,7 +18,7 @@ export default {
   },
   computed: {
     dynamicClass() {
-      return `sandbox-badge__variant__${this.variant} sandbox-badge__size__${this.size}`
+      return 'sandbox-badge__size__' + this.size
     },
   },
 }
@@ -33,9 +29,7 @@ export default {
   padding: 0.15em 0.35em;
   font-size: inherit;
   border-radius: 0.3em;
-}
-
-.sandbox-badge__variant__primary {
+  // default style
   color: white;
   background-color: #555;
 }
