@@ -368,13 +368,11 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.sandbox-monofont {
+<style lang="scss" scoped>
+::v-deep .sandbox-monofont {
   font-family: monospace;
 }
-</style>
 
-<style lang="scss" scoped>
 .sandbox {
   border-radius: 0.2em;
   box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.2);

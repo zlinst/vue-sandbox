@@ -15,7 +15,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Roboto:wght@400;500&display=swap');
 
 #app {
@@ -25,11 +25,11 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
 
-#app .sandbox-monofont {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 400;
-  font-size: 14px;
+  .sandbox-monofont {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: 0.9rem;
+  }
 }
 </style>
