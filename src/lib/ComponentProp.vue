@@ -50,11 +50,11 @@ export default {
   props: {
     value: {
       type: undefined,
-      required: true,
+      default: undefined,
     },
     name: {
       type: String,
-      required: true,
+      default: '',
     },
     type: {
       type: [Function, Array, String],
