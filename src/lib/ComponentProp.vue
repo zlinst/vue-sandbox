@@ -3,6 +3,7 @@
     <div class="sandbox-prop__header">
       <text-badge
         class="sandbox-prop__name-badge sandbox-monofont"
+        size="sm"
         v-text="name"
       />
       <div class="sandbox-prop__type-badges">

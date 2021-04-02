@@ -33,7 +33,7 @@ export default {
   padding: 0.15em 0.35em;
   font-size: inherit;
   border-radius: 0.3em;
-  // default style
+
   color: white;
   background-color: #555;
 }
