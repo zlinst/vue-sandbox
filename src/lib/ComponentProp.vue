@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="sandbox-prop__input">
-      <slot v-bind="{ valueProxy, $attrs }">
+      <slot v-bind="{ valueProxy, attrs: $attrs }">
         <component
           :is="inputComponent"
           v-if="inputComponent"
