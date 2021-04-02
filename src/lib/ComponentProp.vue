@@ -7,7 +7,12 @@
           v-for="(typeInfo, index) in typeList"
           :key="index"
           class="sandbox-prop__type-badge"
+          :class="{
+            highlighted: index === typeIndex,
+            inactive: customInput,
+          }"
           size="sm"
+          @click="() => inactive || switchPropType(index)"
         >
           {{ typeInfo.name }}
         </badge>
@@ -89,6 +94,14 @@ export default {
     inputComponent() {
       return this.typeList[this.typeIndex]?.component
     },
+    customInput() {
+      return !!this.$slots.default
+    },
+  },
+  methods: {
+    switchPropType(index) {
+      this.typeIndex = index
+    },
   },
 }
 </script>
@@ -111,10 +124,21 @@ export default {
 
 .sandbox-prop__type-badge {
   margin: 0.15em;
-  cursor: pointer;
+
+  &.highlighted {
+    background-color: lighten(#264b6d, 20%);
+  }
+  &:not(.inactive) {
+    cursor: pointer;
+  }
 }
 
 .sandbox-prop__input {
   padding-top: 0.5em;
+}
+
+.sandbox-prop__input-unknown {
+  color: #999;
+  font-size: 0.8em;
 }
 </style>
