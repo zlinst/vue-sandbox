@@ -1,9 +1,12 @@
 <template>
   <section class="sandbox-prop">
     <div class="sandbox-prop__header">
-      <badge class="sandbox-prop__name-badge sandbox-monofont" v-text="name" />
+      <text-badge
+        class="sandbox-prop__name-badge sandbox-monofont"
+        v-text="name"
+      />
       <div class="sandbox-prop__type-badges">
-        <badge
+        <text-badge
           v-for="(typeInfo, index) in typeList"
           :key="index"
           class="sandbox-prop__type-badge"
@@ -13,9 +16,8 @@
           }"
           size="sm"
           @click="() => inactive || switchPropType(index)"
-        >
-          {{ typeInfo.name }}
-        </badge>
+          v-text="typeInfo.name"
+        />
       </div>
     </div>
     <div class="sandbox-prop__input">
@@ -32,13 +34,13 @@
 </template>
 
 <script>
-import Badge from './misc/Badge.vue'
+import TextBadge from './misc/TextBadge.vue'
 import { getPropInfo } from './core.js'
 import { isArray } from './utils.js'
 
 export default {
   components: {
-    Badge,
+    TextBadge,
   },
   props: {
     value: {
