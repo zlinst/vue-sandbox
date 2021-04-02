@@ -19,8 +19,8 @@ export default {
 .sandbox-badge {
   font-size: inherit;
   padding: 0.15em 0.35em;
-  font-size: inherit;
   border-radius: 0.3em;
+  white-space: nowrap;
 
   color: white;
   background-color: #555;
