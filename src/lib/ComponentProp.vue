@@ -1,12 +1,14 @@
 <template>
   <section class="sandbox-prop">
     <div class="sandbox-prop__header">
+      <!-- prop name -->
       <text-badge class="sandbox-prop__name sandbox-monofont" v-text="name" />
-      <div class="sandbox-prop__type-badges">
+      <!-- prop types -->
+      <div class="sandbox-prop__types">
         <text-badge
           v-for="(typeInfo, index) in typeList"
           :key="index"
-          class="sandbox-prop__type-badge"
+          class="sandbox-prop__type"
           :class="{
             highlighted: index === typeIndex,
             inactive: customInput,
@@ -17,6 +19,8 @@
         />
       </div>
     </div>
+
+    <!-- prop tags -->
     <div v-if="tagList.length" class="sandbox-prop__tags">
       <text-badge
         v-for="tag in tagList"
@@ -26,6 +30,8 @@
         v-text="tag.name"
       />
     </div>
+
+    <!-- input component -->
     <div class="sandbox-prop__input">
       <slot v-bind="{ valueProxy, attrs: $attrs }">
         <component
@@ -131,13 +137,13 @@ export default {
   background-color: #264b6d;
 }
 
-.sandbox-prop__type-badges {
+.sandbox-prop__types {
   margin-left: auto;
   display: flex;
   align-items: center;
 }
 
-.sandbox-prop__type-badge {
+.sandbox-prop__type {
   margin: 0.15em;
   background-color: #769cbf;
 
