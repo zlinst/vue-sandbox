@@ -24,6 +24,11 @@ export const getPropInfo = (propType) => {
         name: 'Boolean',
         component: () => import('./inputs/InputBoolean.vue'),
       }
+    case 'number':
+      return {
+        name: 'Number',
+        component: () => import('./inputs/InputNumber.vue'),
+      }
   }
 
   return {
