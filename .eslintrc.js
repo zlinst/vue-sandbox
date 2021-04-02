@@ -12,6 +12,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'vue/no-unused-vars': 'warn',
     'vue/no-unused-components': 'warn',
+    "vue/component-name-in-template-casing": ["warn", "kebab-case"],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
