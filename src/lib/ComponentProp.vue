@@ -20,6 +20,7 @@
           v-if="inputComponent"
           v-model="valueProxy"
         />
+        <div v-else class="sandbox-prop__input-unknown">Unknown prop type.</div>
       </slot>
     </div>
   </section>

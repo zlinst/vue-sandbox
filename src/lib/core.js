@@ -13,7 +13,7 @@ export const parsePropType = (propType) => {
 
 export const getPropInfo = (propType) => {
   const propTypeName = parsePropType(propType)
-  switch (propTypeName ? propTypeName.toLowerCase() : propTypeName) {
+  switch (propTypeName?.toLowerCase()) {
     case 'string':
       return {
         name: 'String',
@@ -28,7 +28,7 @@ export const getPropInfo = (propType) => {
 
   return {
     name: propTypeName || 'Unknown',
-    component: () => import('./inputs/InputUnknown.vue'),
+    component: null,
   }
 }
 
