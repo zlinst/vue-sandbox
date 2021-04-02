@@ -1,5 +1,9 @@
 <template>
-  <span class="sandbox-badge" :class="dynamicClass">
+  <span
+    class="sandbox-badge"
+    :class="dynamicClass"
+    @click="(e) => $emit('click', e)"
+  >
     <slot>{{ text }}</slot>
   </span>
 </template>
