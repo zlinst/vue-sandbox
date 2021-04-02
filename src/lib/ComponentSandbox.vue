@@ -2,7 +2,7 @@
   <section class="sandbox">
     <!-- header -->
     <div class="sandbox-header">
-      <span class="sandbox-header__title">{{ title }}</span>
+      <span class="sandbox-header__title">{{ sandboxTitle }}</span>
       <span class="sandbox-header__actions">
         <button class="sandbox-header__action-btn" @click="reload">
           Reload
@@ -20,7 +20,6 @@
       >
         <div
           v-if="!reloading"
-          :key="activeId"
           class="sandbox-component__target"
           :style="{ visibility: ready ? 'visible' : 'hidden' }"
         >
@@ -66,14 +65,24 @@ export default {
     ComponentProp,
   },
   props: {
+    /**
+     * Set the target component, optional.
+     */
     component: {
       type: undefined,
       default: undefined,
     },
+    /**
+     * Prop definitions for the target component.
+     */
     props: {
       type: Object,
       default: () => ({}),
     },
+    /**
+     * Add a small delay for reloading component to make it more responsive, measured in
+     * milliseconds.
+     */
     reloadDelay: {
       type: Number,
       default: 600,
@@ -81,30 +90,32 @@ export default {
   },
   data() {
     return {
-      // used for target component identification, increase this to reload the component
-      targetId: 0,
-      // used for marking target component in current setup
-      activeId: 0,
-
       // Vue instance of the target component
       target: undefined,
-      // list of prop object to be shown
+      // the prop list to be shown
       propsList: [],
-      // the actual props to be binded on the target component
+      // the $props values to be binded on the target component
       propsData: undefined,
 
-      // if the component is ready to be shown
+      // id of current sandbox, increase this will inform the sandbox to reload the target
+      // component
+      // NOTE: the reason we don't use boolean is that we need to filter events/updates from
+      // unloaded/unloading component
+      sandboxId: 0,
+      // id of target component that was set up
+      targetId: 0,
+      // if all the props and events of the target component are setup and ready to be shown
       ready: false,
 
-      // tracks the height of the target component div
+      // tracks the height of the container of the target component
       targetHeight: undefined,
     }
   },
   computed: {
     reloading() {
-      return this.targetId !== this.activeId
+      return this.sandboxId !== this.targetId
     },
-    title() {
+    sandboxTitle() {
       if (this.reloading || !this.ready) return 'Loading ...'
       return this.targetName
     },
@@ -181,11 +192,11 @@ export default {
         // triggered when:
         //  * loaded for the first time
         //  * manually reloaded
-        //  * automatically hot-reload by Vue
+        //  * automatically hot-reload in dev mode
         'hook:beforeCreate': () => {
           this.setup()
         },
-        // tracking v-model prop (even when there is v-model support, but should have no
+        // tracking v-model prop (even when there is no v-model support, but should have no
         // side-effect)
         [this.targetModel.event || 'input']: (value) => {
           if (modelProp) {
@@ -194,6 +205,7 @@ export default {
         },
       }
     },
+    // used for keeping the height of target component container during reloading
     targetStyle() {
       if (this.targetHeight && this.reloading) {
         return {
@@ -207,6 +219,15 @@ export default {
   watch: {
     component() {
       this.reset()
+    },
+    sandboxId(newValue) {
+      // add a small deply to make the UI more responsive
+      setTimeout(() => {
+        // in case a new reload is issued
+        if (newValue === this.sandboxId) {
+          this.targetId = newValue
+        }
+      }, this.reloadDelay)
     },
   },
   created() {
@@ -232,9 +253,9 @@ export default {
     /**
      * Collect all the prop entries.
      *
-     * NOTE: we could use computed property for this, but the Vue reactivity is too senstive that
-     * changing this.activeId and this.target will cause the computed property to be evaluated
-     * multiple times during a single reload.
+     * NOTE: we could use computed property for this, but drawback is: it may be computed twice
+     * within single reload because we accessed targetId and sandboxId (for filtering unwanted
+     * update).
      */
     buildPropsList() {
       this.propsList = []
@@ -266,16 +287,16 @@ export default {
         })
       }
 
-      const activeId = this.activeId
+      const targetId = this.targetId
 
-      // add a proxy property for v-model support
+      // add a proxy property for v-model support so we can bind them to input components
       this.propsList.forEach((prop) => {
         Object.defineProperty(prop, 'valueProxy', {
           get: () => {
             return this.propsData[prop.name]
           },
           set: (value) => {
-            if (activeId !== this.targetId) {
+            if (targetId !== this.sandboxId) {
               // ignores updates from destroyed component
               return
             }
@@ -285,7 +306,7 @@ export default {
       })
     },
     /**
-     * Set the default values of the props.
+     * Setup the default values of $props.
      */
     setupPropsData() {
       this.propsList.forEach((prop) => {
@@ -299,7 +320,7 @@ export default {
       })
     },
     /**
-     * Clear values of the props.
+     * Clears the $props values.
      */
     resetPropsData() {
       this.propsData = { __sandboxed: true }
@@ -310,16 +331,7 @@ export default {
     reload() {
       // record current height
       this.targetHeight = this.getTargetHeight()
-      const targetId = ++this.targetId
-      // add a small deply to make the process more responsive
-      this.$nextTick(() =>
-        setTimeout(() => {
-          // in case a new reload is issued
-          if (targetId === this.targetId) {
-            this.activeId = targetId
-          }
-        }, this.reloadDelay)
-      )
+      ++this.sandboxId
     },
     /**
      * Re-mount the component and clear everything.
@@ -344,7 +356,7 @@ export default {
       }
     },
     /**
-     * Returns the current height of the component target div.
+     * Returns the current height of the container of the target component.
      */
     getTargetHeight() {
       if (!this.$refs.target) return null
