@@ -57,7 +57,8 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { has } from './utils.js'
+import { parsePropType } from './core.js'
+import { has, isArray } from './utils.js'
 
 export default {
   name: 'ComponentSandbox',
@@ -307,13 +308,30 @@ export default {
     },
     /**
      * Setup the default values of $props.
+     *
+     * See: https://github.com/vuejs/vue/blob/fa1f81e91062e9de6161708209cd7354733aa354/src/core/util/props.js#L67
      */
     setupPropsData() {
       this.propsList.forEach((prop) => {
+        // we want to preserve values when reload, so just ignore values that's set previously, but
+        // we'll still want to continue check other props as there might be new props added to the
+        // target component
         if (has(this.propsData, prop.name)) return
 
         if (has(prop, 'default')) {
-          this.$set(this.propsData, prop.name, prop.default)
+          let defaultValue = prop.default
+          // TODO: vue seems only checks the first type if it's an array?
+          const primaryType = isArray(prop.type) ? prop.type[0] : prop.type
+
+          // call factory function for non-Function types
+          if (
+            typeof defaultValue === 'function' &&
+            parsePropType(primaryType) !== 'Function'
+          ) {
+            defaultValue = prop.default.call(this.target)
+          }
+
+          this.$set(this.propsData, prop.name, defaultValue)
         } else {
           this.$set(this.propsData, prop.name, undefined)
         }
