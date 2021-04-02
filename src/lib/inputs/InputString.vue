@@ -1,6 +1,6 @@
 <template>
   <div class="input-string">
-    <input type="text" :value="value" @input="update" />
+    <textarea type="text" rows="1" :value="value" @input="update"></textarea>
   </div>
 </template>
 
@@ -21,12 +21,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.input-string input {
+.input-string textarea {
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   display: block;
   box-sizing: border-box;
   width: 100%;
+  resize: vertical;
 }
 </style>
