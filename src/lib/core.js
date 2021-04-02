@@ -30,7 +30,7 @@ export const getPropInfo = (propType) => {
 
   return {
     name: propTypeName || 'Unknown',
-    component: null,
+    component: () => import('./inputs/InputUnknown.vue'),
   }
 }
 
