@@ -1,3 +1,11 @@
+export const has = (obj, key) => {
+  return Object.prototype.hasOwnProperty.call(obj, key)
+}
+
+export const isArray = (obj) => {
+  return Array.isArray(obj)
+}
+
 /**
  * Convert Vue prop type (e.g. String, Boolean etc) to string for type checking.
  *
@@ -32,9 +40,4 @@ export const getPropInfo = (propType) => {
     name: propTypeName || 'Unknown',
     component: () => import('./inputs/InputUnknown.vue'),
   }
-}
-
-export default {
-  parsePropType,
-  getPropInfo,
 }

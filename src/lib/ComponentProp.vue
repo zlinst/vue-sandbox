@@ -41,8 +41,7 @@
 
 <script>
 import TextBadge from './misc/TextBadge.vue'
-import { getPropInfo } from './core.js'
-import { isArray } from './utils.js'
+import { isArray, getPropInfo } from './shared.js'
 
 export default {
   components: {

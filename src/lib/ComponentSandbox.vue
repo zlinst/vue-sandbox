@@ -57,8 +57,7 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { parsePropType } from './core.js'
-import { has, isArray } from './utils.js'
+import { has, isArray, parsePropType } from './shared.js'
 
 export default {
   name: 'ComponentSandbox',
