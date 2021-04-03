@@ -1,8 +1,8 @@
 {
   "include": ["./src/**/*", "./lib/**/*"],
   "typeAcquisition": {
-    // get rid of the "File '…/node_modules/dotenv/types' not found." error message, it's
+    // get rid of the "File '…/node_modules/.../types' not found." error message, it's
     // non-breaking but bit annoying
-    "exclude": [ "dotenv" ]
+    "exclude": [ "dotenv", "source-map" ]
   }
 }

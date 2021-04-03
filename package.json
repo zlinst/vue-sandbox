@@ -1,11 +1,12 @@
 {
-  "name": "vue-sandbox",
+  "name": "vue2-sandbox",
   "version": "0.0.1",
   "private": true,
   "description": "A sandbox component for developing, testing and documenting other Vue components.",
   "author": {
     "name": "Lin"
   },
+  "main": "lib/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
