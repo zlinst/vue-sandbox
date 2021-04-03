@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import ComponentSandbox from '@/lib/ComponentSandbox.vue'
+import ComponentSandbox from '@lib/ComponentSandbox.vue'
 
-const libComponents = require.context('@/lib', true, /\.vue$/)
+const libComponents = require.context('@lib', true, /\.vue$/)
 
 export default {
-  name: 'SandboxDemo',
+  name: 'HomePage',
   components: {
     ComponentSandbox,
   },
