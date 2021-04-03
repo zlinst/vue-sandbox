@@ -20,6 +20,8 @@
 </template>
 
 <script>
+const RE_FONT_SIZE = /^([\d.]+)(.*)$/
+
 export default {
   props: {
     content: {
@@ -47,17 +49,19 @@ export default {
     }
   },
   computed: {
-    computedFontSize() {
-      const match = this.fontSize.match(/^([\d.]+)(.*)$/)
-      return {
-        value: parseFloat(match[1]),
-        unit: match[2],
-      }
+    parsedFontSize() {
+      const match = this.fontSize.match(RE_FONT_SIZE)
+      return match
+        ? {
+            value: parseFloat(match[1]),
+            unit: match[2],
+          }
+        : {}
     },
     computedMaxHeight() {
       return (
-        this.computedFontSize.value * this.lineHeight * this.maxLines +
-        this.computedFontSize.unit
+        this.parsedFontSize.value * this.lineHeight * this.maxLines +
+        this.parsedFontSize.unit
       )
     },
     // styles for code
