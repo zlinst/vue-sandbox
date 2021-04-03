@@ -11,8 +11,7 @@
 </template>
 
 <script>
-import ComponentSandbox from '@lib/ComponentSandbox.vue'
-
+import { ComponentSandbox } from '@lib'
 const libComponents = require.context('@lib', true, /\.vue$/)
 
 export default {
