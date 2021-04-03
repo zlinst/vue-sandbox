@@ -59,7 +59,7 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { has, isArray, parsePropType } from './shared.js'
+import { objectHas, isArray, parsePropType } from './shared.js'
 
 export default {
   name: 'ComponentSandbox',
@@ -317,9 +317,9 @@ export default {
         // we want to preserve values when reload, so just ignore values that's set previously, but
         // we'll still want to continue check other props as there might be new props added to the
         // target component
-        if (has(this.propsData, prop.name)) return
+        if (objectHas(this.propsData, prop.name)) return
 
-        if (has(prop, 'default')) {
+        if (objectHas(prop, 'default')) {
           let defaultValue = prop.default
           // TODO: vue seems only checks the first type if it's an array?
           const primaryType = isArray(prop.type) ? prop.type[0] : prop.type
