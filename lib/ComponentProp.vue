@@ -47,7 +47,11 @@
 
 <script>
 import TextBadge from './misc/TextBadge.vue'
-import { isArray, getPropInfo } from './shared.js'
+import InputString from './inputs/InputString.vue'
+import InputBoolean from './inputs/InputBoolean.vue'
+import InputNumber from './inputs/InputNumber.vue'
+import InputUnknown from './inputs/InputUnknown.vue'
+import { isArray, parsePropType } from './shared.js'
 
 export default {
   components: {
@@ -105,14 +109,37 @@ export default {
       ]
     },
     typeList() {
-      if (isArray(this.type)) {
-        return this.type.map((t) => getPropInfo(t))
-      }
+      const propTypes = isArray(this.type) ? this.type : [this.type]
+      return propTypes.map((propType) => {
+        const propTypeName = parsePropType(propType)
+        switch (propTypeName) {
+          case 'String':
+            return {
+              name: 'String',
+              component: InputString,
+            }
+          case 'Boolean':
+            return {
+              name: 'Boolean',
+              component: InputBoolean,
+            }
+          case 'Number':
+            return {
+              name: 'Number',
+              component: InputNumber,
+            }
+        }
 
-      return [getPropInfo(this.type)]
+        return {
+          name: propTypeName || 'Unknown',
+          component: InputUnknown,
+        }
+      })
     },
     inputComponent() {
-      return this.typeList[this.typeIndex]?.component
+      return this.typeList[this.typeIndex]
+        ? this.typeList[this.typeIndex].component
+        : undefined
     },
     customInput() {
       return !!this.$slots.default
