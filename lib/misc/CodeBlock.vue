@@ -1,16 +1,19 @@
 <template>
-  <div class="sandbox-codeblock" :class="{ folded: folded, expanded: !folded }">
-    <div class="sandbox-codeblock__content-wrapper">
+  <div
+    class="vue-sandbox-codeblock"
+    :class="{ folded: folded, expanded: !folded }"
+  >
+    <div class="vue-sandbox-codeblock__content-wrapper">
       <p
         ref="content"
-        class="sandbox-codeblock__content sandbox-monofont"
+        class="vue-sandbox-codeblock__content vue-sandbox-monofont"
         :style="contentStyle"
         v-text="content"
       ></p>
     </div>
     <div
       v-show="foldable || unfoldable"
-      class="sandbox-codeblock__fold-toggle"
+      class="vue-sandbox-codeblock__fold-toggle"
       @click="toggle"
     >
       <span v-show="folded">...</span>
@@ -131,17 +134,17 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.sandbox-codeblock {
+<style>
+.vue-sandbox-codeblock {
   border-radius: 0.2rem;
   background-color: #ddd;
 }
 
-.sandbox-codeblock__content-wrapper {
+.vue-sandbox-codeblock__content-wrapper {
   padding: 0.5rem;
 }
 
-.sandbox-codeblock__content {
+.vue-sandbox-codeblock__content {
   margin: 0;
   padding: 0;
   font-family: monospace;
@@ -150,7 +153,7 @@ export default {
   overflow: hidden;
 }
 
-.sandbox-codeblock__fold-toggle {
+.vue-sandbox-codeblock__fold-toggle {
   border-bottom-left-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;
   line-height: 1.2;
@@ -159,12 +162,12 @@ export default {
   cursor: pointer;
   color: white;
   text-align: center;
+}
 
-  .folded & {
-    background-color: #e8bd32;
-  }
-  .expanded & {
-    background-color: #7ed6b4;
-  }
+.vue-sandbox-codeblock.folded .vue-sandbox-codeblock__fold-toggle {
+  background-color: #e8bd32;
+}
+.vue-sandbox-codeblock.expanded .vue-sandbox-codeblock__fold-toggle {
+  background-color: #7ed6b4;
 }
 </style>

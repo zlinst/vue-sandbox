@@ -27,7 +27,7 @@ export default {
   color: #2c3e50;
 }
 
-.sandbox-monofont {
+.vue-sandbox-monofont {
   font-family: 'JetBrains Mono', monospace;
 }
 </style>

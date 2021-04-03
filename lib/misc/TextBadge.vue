@@ -1,5 +1,5 @@
 <template>
-  <span class="sandbox-badge" @click="(e) => $emit('click', e)">
+  <span class="vue-sandbox-badge" @click="(e) => $emit('click', e)">
     <slot>{{ text }}</slot>
   </span>
 </template>
@@ -15,14 +15,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.sandbox-badge {
-  font-size: inherit;
+<style>
+.vue-sandbox-badge {
   padding: 0.15em 0.35em;
   border-radius: 0.3em;
   white-space: nowrap;
-
-  color: white;
-  background-color: #555;
 }
 </style>

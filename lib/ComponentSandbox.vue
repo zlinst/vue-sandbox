@@ -1,26 +1,28 @@
 <template>
-  <section class="sandbox">
+  <section class="vue-sandbox">
     <!-- header -->
-    <div class="sandbox-header">
-      <span class="sandbox-header__title">{{ sandboxTitle }}</span>
-      <span class="sandbox-header__actions">
-        <button class="sandbox-header__action-btn" @click="reload">
+    <div class="vue-sandbox__header">
+      <span class="vue-sandbox__header-title">{{ sandboxTitle }}</span>
+      <span class="vue-sandbox__header-actions">
+        <button class="vue-sandbox__header-action-btn" @click="reload">
           Reload
         </button>
-        <button class="sandbox-header__action-btn" @click="reset">Reset</button>
+        <button class="vue-sandbox__header-action-btn" @click="reset">
+          Reset
+        </button>
       </span>
     </div>
 
-    <div class="sandbox-component">
+    <div class="vue-sandbox__main">
       <!-- target component -->
       <div
         ref="target"
-        class="sandbox-component__target-wrapper"
+        class="vue-sandbox__component-wrapper"
         :style="targetStyle"
       >
         <div
           v-if="!reloading"
-          class="sandbox-component__target"
+          class="vue-sandbox__component"
           :style="{ visibility: ready ? 'visible' : 'hidden' }"
         >
           <slot v-bind="{ propsData, eventsData }">
@@ -35,12 +37,12 @@
       </div>
 
       <!-- props of target component -->
-      <div class="sandbox-component__props">
+      <div class="vue-sandbox__component-props">
         <div
           v-for="prop in propsList"
           :key="prop.name"
           :temp="(slotName = 'prop:' + prop.name)"
-          class="sandbox-component__prop"
+          class="vue-sandbox__component-prop"
         >
           <div v-if="$scopedSlots[slotName]">
             <slot :name="slotName" v-bind="{ prop }" />
@@ -50,7 +52,7 @@
       </div>
 
       <!-- loading overlay -->
-      <div v-show="reloading || !ready" class="sandbox-overlay"></div>
+      <div v-show="reloading || !ready" class="vue-sandbox__main-overlay"></div>
     </div>
   </section>
 </template>
@@ -385,72 +387,68 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.sandbox-monofont {
+<!-- shared styles -->
+<style>
+.vue-sandbox-monofont {
   font-family: monospace;
 }
 </style>
 
-<style lang="scss" scoped>
-.sandbox {
-  border-radius: 0.2em;
-  box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.2);
+<!-- local styles -->
+<style>
+.vue-sandbox {
+  border-radius: 0.2rem;
+  box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.2);
 }
 
-.sandbox-header {
+.vue-sandbox__header {
   display: flex;
   align-items: center;
-  border-top-left-radius: 0.2em;
-  border-top-right-radius: 0.2em;
+  border-top-left-radius: 0.2rem;
+  border-top-right-radius: 0.2rem;
   padding: 0.5em 0.5em;
+
+  color: white;
   background-color: #264b6d;
-  color: #eee;
 }
 
-.sandbox-header__title {
+.vue-sandbox__header-title {
+  font-size: 1rem;
   font-weight: 500;
 }
 
-.sandbox-header__actions {
+.vue-sandbox__header-actions {
   margin-left: auto;
 }
 
-.sandbox-header__action-btn {
-  font-size: 0.9em;
+.vue-sandbox__header-action-btn {
+  font-size: 0.9rem;
   font-family: inherit;
   cursor: pointer;
   margin-left: 0.25em;
   margin-right: 0.25em;
 }
 
-.sandbox-component {
+.vue-sandbox__main {
   position: relative;
 }
 
-.sandbox-component__target-wrapper {
+.vue-sandbox__component-wrapper {
   padding: 2em;
 }
 
-// .sandbox-component__target {
-// }
-
-.sandbox-component__target__outlined {
-  border: 1px dotted #264b6d;
-}
-
-.sandbox-component__props {
+.vue-sandbox__component-props {
   background-color: #f4faff;
 }
 
-.sandbox-component__prop {
+.vue-sandbox__component-prop {
   padding: 0.75em;
   border-top: 1px solid #dae6ef;
 }
 
-// overlay effect
-.sandbox-overlay {
+/* overlay effect */
+.vue-sandbox__main-overlay {
   position: absolute;
-  // inset: 0; // not supported in IE
   top: 0;
   right: 0;
   bottom: 0;
@@ -459,6 +457,5 @@ export default {
 
   background-color: #555;
   opacity: 0.75;
-  // backdrop-filter: blur(2px);
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <div class="input-boolean">
-    <input id="toggle" type="checkbox" :checked="value" @change="update" />
-    <span class="text">{{ value ? 'Yes' : 'No' }}</span>
+  <div class="vue-sandbox-boolean-input">
+    <input type="checkbox" :checked="value" @change="update" />
+    <span>{{ value ? 'Yes' : 'No' }}</span>
   </div>
 </template>
 
@@ -21,15 +21,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.input-boolean {
-  input {
-    transform: scale(1.5);
-    padding: 0.1em;
-  }
-
-  .text {
-    margin-left: 0.5em;
-  }
+<style>
+.vue-sandbox-boolean-input > input {
+  transform: scale(1.25);
+  padding: 0.1em;
+  margin-right: 0.5em;
 }
 </style>

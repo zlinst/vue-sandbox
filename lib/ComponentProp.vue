@@ -1,14 +1,17 @@
 <template>
-  <section class="sandbox-prop">
-    <div class="sandbox-prop__header">
+  <section class="vue-sandbox-prop">
+    <div class="vue-sandbox-prop__header">
       <!-- prop name -->
-      <text-badge class="sandbox-prop__name sandbox-monofont" v-text="name" />
+      <text-badge
+        class="vue-sandbox-prop__header-name vue-sandbox-monofont"
+        v-text="name"
+      />
       <!-- prop types -->
-      <div class="sandbox-prop__types">
+      <div class="vue-sandbox-prop__header-types">
         <text-badge
           v-for="(typeInfo, index) in typeList"
           :key="index"
-          class="sandbox-prop__type"
+          class="vue-sandbox-prop__header-type"
           :class="{
             highlighted: index === typeIndex,
             inactive: customInput,
@@ -21,25 +24,27 @@
     </div>
 
     <!-- prop tags -->
-    <div v-if="tagList.length" class="sandbox-prop__tags">
+    <div v-if="tagList.length" class="vue-sandbox-prop__tags">
       <text-badge
         v-for="tag in tagList"
         :key="tag.name"
-        class="sandbox-prop__tag sandbox-monofont"
-        :class="`sandbox-prop__tag__${tag.classMod}`"
+        class="vue-sandbox-prop__tag vue-sandbox-monofont"
+        :class="`vue-sandbox-prop__tag__${tag.classMod}`"
         v-text="tag.name"
       />
     </div>
 
     <!-- input component -->
-    <div class="sandbox-prop__input">
+    <div class="vue-sandbox-prop__input">
       <slot v-bind="{ valueProxy, attrs: $attrs }">
         <component
           :is="inputComponent"
           v-if="inputComponent"
           v-model="valueProxy"
         />
-        <div v-else class="sandbox-prop__input-unknown">Unknown prop type.</div>
+        <div v-else class="vue-sandbox-prop__input-unknown">
+          Unknown prop type.
+        </div>
       </slot>
     </div>
   </section>
@@ -58,30 +63,37 @@ export default {
     TextBadge,
   },
   props: {
+    // prop value
     value: {
       type: undefined,
       default: undefined,
     },
+    // prop name
     name: {
       type: String,
       default: '',
     },
+    // prop type
     type: {
       type: [Function, Array, String],
       default: undefined,
     },
+    // if the prop is the v-model
     isModel: {
       type: Boolean,
       default: false,
     },
+    // custom description
     description: {
       type: String,
       default: undefined,
     },
+    // if the prop is required
     required: {
       type: Boolean,
       default: false,
     },
+    // if the prop is not defined in $props (e.g. supported via $attrs)
     unlisted: {
       type: Boolean,
       default: false,
@@ -153,61 +165,61 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.sandbox-prop__header {
+<style lang="scss">
+.vue-sandbox-prop__header {
   display: flex;
   align-items: center;
-  font-size: 0.85em;
+  font-size: 0.85rem;
 }
 
-.sandbox-prop__name {
+.vue-sandbox-prop__header-name {
+  color: white;
   background-color: #264b6d;
 }
 
-.sandbox-prop__types {
+.vue-sandbox-prop__header-types {
   margin-left: auto;
   display: flex;
   align-items: center;
 }
 
-.sandbox-prop__type {
+.vue-sandbox-prop__header-type {
   margin: 0.15em;
+  color: white;
   background-color: #769cbf;
-
-  &.highlighted {
-    background-color: darken(#769cbf, 15%);
-  }
-  &:not(.inactive) {
-    cursor: pointer;
-  }
 }
 
-.sandbox-prop__tags {
+.vue-sandbox-prop__header-type:not(.inactive).highlighted {
+  background-color: #4a769e;
+}
+.vue-sandbox-prop__header-type:not(.inactive) {
+  cursor: pointer;
+}
+
+.vue-sandbox-prop__tags {
   margin-top: 0.3em;
   margin-bottom: 0.5em;
 }
 
-.sandbox-prop__tag {
-  font-size: 0.75em;
-  background-color: initial;
+.vue-sandbox-prop__tag {
+  font-size: 0.75rem;
   border: 1px solid;
-
-  &__vmodel {
-    color: #718bff;
-  }
-  &__required {
-    color: #ff6666;
-  }
-  &__unlisted {
-    color: #575757;
-  }
-
-  &:not(:first-child) {
-    margin-left: 0.5em;
-  }
+}
+.vue-sandbox-prop__tag:not(:first-child) {
+  margin-left: 0.5em;
 }
 
-.sandbox-prop__input {
+.vue-sandbox-prop__tag__vmodel {
+  color: #718bff;
+}
+.vue-sandbox-prop__tag__required {
+  color: #ff6666;
+}
+.vue-sandbox-prop__tag__unlisted {
+  color: #575757;
+}
+
+.vue-sandbox-prop__input {
   margin-top: 0.5em;
 }
 </style>

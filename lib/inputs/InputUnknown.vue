@@ -1,5 +1,5 @@
 <template>
-  <div class="input-unknown">
+  <div class="vue-sandbox-unknown-input">
     <code-block :content="serialisedValue" />
   </div>
 </template>

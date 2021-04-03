@@ -1,5 +1,5 @@
 <template>
-  <div class="input-number">
+  <div class="vue-sandbox-number-input">
     <input type="number" :value="value" @input="update" />
   </div>
 </template>
@@ -22,8 +22,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.input-number input {
+<style>
+.vue-sandbox-number-input input {
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
