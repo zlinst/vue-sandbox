@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+*.vue     text
+*.js      text
+*.css     text
