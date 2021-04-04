@@ -1,7 +1,6 @@
 import InputString from './inputs/InputString.vue'
 import InputBoolean from './inputs/InputBoolean.vue'
 import InputNumber from './inputs/InputNumber.vue'
-import InputRaw from './inputs/InputRaw.vue'
 import { isArray, isFunction } from './utils.js'
 
 /**
@@ -20,8 +19,8 @@ export const getPropTypeName = (propType) => {
  * See: https://github.com/vuejs/vue/blob/fa1f81e91062e9de6161708209cd7354733aa354/src/core/util/props.js#L67
  */
 export const getPropDefaultValue = (vm, type, def) => {
-  // NOTE: the prop.type might be array as supported by Vue prop definition
-  // TODO: vue seems only checks the first type if it's an array?
+  // NOTE: the prop.type might be array as supported by Vue
+  // TODO: Vue seems only checks the first type if it's an array?
   type = isArray(type) ? type[0] : type
 
   // call factory function for non-Function types
@@ -32,58 +31,46 @@ export const getPropDefaultValue = (vm, type, def) => {
   return def
 }
 
-// the order matters as match function will be run in the order as defined
+// the order matters as is function will be run in the order as defined
 const propTypeDefinitions = [
   {
-    name: 'String',
+    name: getPropTypeName(String),
     component: InputString,
-    match: (value) => typeof value === 'string',
   },
   {
-    name: 'Boolean',
+    name: getPropTypeName(Boolean),
     component: InputBoolean,
-    match: (value) => typeof value === 'boolean',
   },
   {
-    name: 'Number',
+    name: getPropTypeName(Number),
     component: InputNumber,
-    match: (value) => typeof value === 'number',
-  },
-  {
-    name: 'Any',
-    component: InputRaw,
-    match: () => true,
   },
 ]
 
-export const registerPropTypeDefinition = () => {
+export const registerPropType = () => {
   throw new Error('Not Implemented')
 }
 
 /**
- * Get the prop type definition by prop.type.
+ * Get the prop type metadata by prop.type.
  */
-export const resolvePropTypeDefinition = (propType) => {
-  let propTypeName
-
+export const resolvePropType = (propType) => {
   if (typeof propType === 'undefined') {
-    propTypeName = 'Any'
-  } else {
-    // support pass type as string
-    propTypeName =
-      (typeof propType === 'string' ? propType : getPropTypeName(propType)) ||
-      ''
+    return {
+      name: 'Any',
+    }
   }
 
+  // support pass type as string
+  let propTypeName =
+    (typeof propType === 'string' ? propType : getPropTypeName(propType)) || ''
+
   return (
-    propTypeDefinitions.find((d) => d.name === propTypeName) || {
+    propTypeDefinitions.find((def) => {
+      return def.name === propTypeName
+    }) || {
       name: propTypeName || 'Unknown',
-      component: InputRaw,
-      match: () => false,
+      unresolved: true,
     }
   )
-}
-
-export const findMatchedPropTypeDefinition = (propValue) => {
-  return propTypeDefinitions.find((d) => d.match(propValue))
 }

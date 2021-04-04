@@ -25,11 +25,16 @@
           :key="index"
           class="vue-sandbox-prop__header-type"
           :class="{
-            highlighted: index === typeIndex,
-            inactive: customInput,
+            selected: index === typeIndex,
+            inactive: customisedInput || !typeInfo.component,
           }"
           size="sm"
-          @click="() => customInput || switchPropType(index)"
+          @click="
+            () => {
+              if (customisedInput || !typeInfo.component) return
+              switchPropType(index)
+            }
+          "
           v-text="typeInfo.name"
         />
       </div>
@@ -68,12 +73,9 @@
 <script>
 import TextBadge from './misc/TextBadge.vue'
 import PropEditor from './misc/PropEditor.vue'
+import InputRaw from './inputs/InputRaw.vue'
 import { isArray } from './utils.js'
-import {
-  getPropDefaultValue,
-  resolvePropTypeDefinition,
-  findMatchedPropTypeDefinition,
-} from './props.js'
+import { getPropDefaultValue, resolvePropType } from './props.js'
 
 export default {
   components: {
@@ -81,22 +83,18 @@ export default {
     PropEditor,
   },
   props: {
-    // prop value
     value: {
       type: undefined,
       default: undefined,
     },
-    // prop name
     name: {
       type: String,
       default: '',
     },
-    // prop type
     type: {
       type: [Function, Array, String],
       default: undefined,
     },
-    // prop default value
     default: {
       type: undefined,
       default: undefined,
@@ -111,7 +109,6 @@ export default {
       type: String,
       default: undefined,
     },
-    // if the prop is required
     required: {
       type: Boolean,
       default: false,
@@ -151,28 +148,35 @@ export default {
     },
     typeList() {
       return (isArray(this.type) ? this.type : [this.type]).map((propType) =>
-        resolvePropTypeDefinition(propType)
+        resolvePropType(propType)
       )
     },
-    activeType() {
-      return findMatchedPropTypeDefinition(this.valueProxy)
-    },
     inputComponent() {
-      return this.typeList[this.typeIndex]
+      const component = this.typeList[this.typeIndex]
         ? this.typeList[this.typeIndex].component
         : undefined
+
+      return component || InputRaw
     },
-    customInput() {
+    customisedInput() {
       return !!this.$slots.default
     },
   },
+  created() {
+    // set to the first type that has input component defined
+    this.typeIndex = this.typeList.findIndex((t) => t.component)
+  },
   methods: {
     switchPropType(index) {
+      this.editMode = false
       this.typeIndex = index
     },
     updateValue(value) {
       this.editMode = false
       this.valueProxy = value
+
+      // enter raw mode (un-highlight all prop types)
+      this.typeIndex = -1
     },
     resetValue() {
       this.valueProxy = getPropDefaultValue(this.vm, this.type, this.default)
@@ -181,7 +185,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .vue-sandbox-prop__header {
   display: flex;
   align-items: center;
@@ -209,14 +213,18 @@ export default {
 .vue-sandbox-prop__header-type {
   margin: 0.15em;
   color: white;
-  background-color: #769cbf;
+  background-color: #4a769e;
 }
 
-.vue-sandbox-prop__header-type:not(.inactive).highlighted {
-  background-color: #4a769e;
+.vue-sandbox-prop__header-type.inactive {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 .vue-sandbox-prop__header-type:not(.inactive) {
   cursor: pointer;
+}
+.vue-sandbox-prop__header-type:not(.inactive).selected {
+  font-weight: bold;
 }
 
 .vue-sandbox-prop__tags {
