@@ -1,8 +1,9 @@
 {
-  "include": ["./src/**/*", "./lib/**/*"],
-  "typeAcquisition": {
-    // get rid of the "File '…/node_modules/.../types' not found." error message, it's
-    // non-breaking but bit annoying
-    "exclude": [ "dotenv", "source-map" ]
-  }
+  "include": [
+    "src/**/*.js",
+    "src/**/*.vue",
+    "dev/**/*.js",
+    "dev/**/*.vue"
+  ],
+  "exclude": ["node_modules"]
 }
