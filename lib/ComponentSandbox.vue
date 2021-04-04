@@ -44,14 +44,13 @@
           :temp="(slotName = 'prop:' + prop.name)"
           class="vue-sandbox__component-prop"
         >
-          <div v-if="$scopedSlots[slotName]">
-            <slot :name="slotName" v-bind="{ prop }" />
-          </div>
-          <component-prop
-            v-model="prop.valueProxy"
-            v-bind="prop"
-            :vm="target"
-          />
+          <component-prop v-model="prop.valueProxy" v-bind="prop" :vm="target">
+            <slot
+              v-if="$scopedSlots[slotName]"
+              :name="slotName"
+              v-bind="{ prop }"
+            />
+          </component-prop>
         </div>
       </div>
 

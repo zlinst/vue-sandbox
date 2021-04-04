@@ -47,15 +47,8 @@
 
     <!-- input component -->
     <div class="vue-sandbox-prop__input">
-      <slot v-bind="{ valueProxy, attrs: $attrs }">
-        <component
-          :is="inputComponent"
-          v-if="inputComponent"
-          v-model="valueProxy"
-        />
-        <div v-else class="vue-sandbox-prop__input-unknown">
-          Unknown prop type.
-        </div>
+      <slot>
+        <component :is="inputComponent" v-model="valueProxy" />
       </slot>
     </div>
   </section>
