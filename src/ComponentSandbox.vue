@@ -63,7 +63,8 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { objectHas, parsePropDefault } from './shared.js'
+import { objectHas } from './utils.js'
+import { getPropDefaultValue } from './props.js'
 
 export default {
   name: 'ComponentSandbox',
@@ -322,7 +323,7 @@ export default {
           this.propsData,
           prop.name,
           objectHas(prop, 'default')
-            ? parsePropDefault(this.target, prop.type, prop.default)
+            ? getPropDefaultValue(this.target, prop.type, prop.default)
             : undefined
         )
       })

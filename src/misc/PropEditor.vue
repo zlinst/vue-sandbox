@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { checkPropEvalAllowed } from '../shared.js'
+import { checkPropEvalAllowed } from '../utils.js'
 
 const ALLOW_PROP_EVALUATION = checkPropEvalAllowed()
 

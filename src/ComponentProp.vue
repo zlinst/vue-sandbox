@@ -68,11 +68,12 @@
 <script>
 import TextBadge from './misc/TextBadge.vue'
 import PropEditor from './misc/PropEditor.vue'
-import InputString from './inputs/InputString.vue'
-import InputBoolean from './inputs/InputBoolean.vue'
-import InputNumber from './inputs/InputNumber.vue'
-import InputUnknown from './inputs/InputUnknown.vue'
-import { isArray, parsePropType, parsePropDefault } from './shared.js'
+import { isArray } from './utils.js'
+import {
+  getPropDefaultValue,
+  resolvePropTypeDefinition,
+  findMatchedPropTypeDefinition,
+} from './props.js'
 
 export default {
   components: {
@@ -149,32 +150,12 @@ export default {
       ]
     },
     typeList() {
-      const propTypes = isArray(this.type) ? this.type : [this.type]
-      return propTypes.map((propType) => {
-        const propTypeName = parsePropType(propType)
-        switch (propTypeName) {
-          case 'String':
-            return {
-              name: 'String',
-              component: InputString,
-            }
-          case 'Boolean':
-            return {
-              name: 'Boolean',
-              component: InputBoolean,
-            }
-          case 'Number':
-            return {
-              name: 'Number',
-              component: InputNumber,
-            }
-        }
-
-        return {
-          name: propTypeName || 'Unknown',
-          component: InputUnknown,
-        }
-      })
+      return (isArray(this.type) ? this.type : [this.type]).map((propType) =>
+        resolvePropTypeDefinition(propType)
+      )
+    },
+    activeType() {
+      return findMatchedPropTypeDefinition(this.valueProxy)
     },
     inputComponent() {
       return this.typeList[this.typeIndex]
@@ -194,7 +175,7 @@ export default {
       this.valueProxy = value
     },
     resetValue() {
-      this.valueProxy = parsePropDefault(this.vm, this.type, this.default)
+      this.valueProxy = getPropDefaultValue(this.vm, this.type, this.default)
     },
   },
 }
