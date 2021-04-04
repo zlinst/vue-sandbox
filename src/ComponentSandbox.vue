@@ -91,7 +91,7 @@ export default {
      */
     reloadDelay: {
       type: Number,
-      default: 600,
+      default: 350,
     },
   },
   data() {
