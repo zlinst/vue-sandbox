@@ -30,4 +30,7 @@ export default {
 .vue-sandbox-monofont {
   font-family: 'JetBrains Mono', monospace;
 }
+.vue-sandbox-prop__header-type:not(.inactive).selected {
+  font-weight: 500;
+}
 </style>
