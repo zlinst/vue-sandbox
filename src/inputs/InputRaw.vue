@@ -6,6 +6,7 @@
 
 <script>
 import CodeBlock from '../misc/CodeBlock.vue'
+import { stringify } from '../utils.js'
 
 export default {
   components: {
@@ -19,15 +20,7 @@ export default {
   },
   computed: {
     serialisedValue() {
-      const valueType = typeof this.value
-
-      if (valueType === 'object') {
-        return JSON.stringify(this.value, null, 0)
-      } else if (valueType === 'string') {
-        return `"${this.value}"`
-      } else {
-        return String(this.value)
-      }
+      return stringify(this.value)
     },
   },
 }

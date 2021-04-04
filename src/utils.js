@@ -9,6 +9,17 @@ export const isArray = (obj) => {
   return Array.isArray(obj)
 }
 
+export const stringify = (obj, pretty) => {
+  switch (typeof obj) {
+    case 'object':
+      return JSON.stringify(obj, null, pretty ? 2 : 0)
+    case 'string':
+      return `"${obj}"`
+    default:
+      return String(obj)
+  }
+}
+
 export const isFunction = (obj) => {
   return typeof obj === 'function'
 }
