@@ -47,7 +47,11 @@
           <div v-if="$scopedSlots[slotName]">
             <slot :name="slotName" v-bind="{ prop }" />
           </div>
-          <component-prop v-model="prop.valueProxy" v-bind="prop" />
+          <component-prop
+            v-model="prop.valueProxy"
+            v-bind="prop"
+            :vm="target"
+          />
         </div>
       </div>
 
@@ -59,7 +63,7 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { objectHas, isArray, parsePropType } from './shared.js'
+import { objectHas, parsePropDefault } from './shared.js'
 
 export default {
   name: 'ComponentSandbox',
@@ -291,8 +295,8 @@ export default {
 
       const targetId = this.targetId
 
-      // add a proxy property for v-model support so we can bind them to input components
       this.propsList.forEach((prop) => {
+        // add a proxy property for v-model support so we can bind them to input components
         Object.defineProperty(prop, 'valueProxy', {
           get: () => {
             return this.propsData[prop.name]
@@ -309,8 +313,6 @@ export default {
     },
     /**
      * Setup the default values of $props.
-     *
-     * See: https://github.com/vuejs/vue/blob/fa1f81e91062e9de6161708209cd7354733aa354/src/core/util/props.js#L67
      */
     setupPropsData() {
       this.propsList.forEach((prop) => {
@@ -319,23 +321,13 @@ export default {
         // target component
         if (objectHas(this.propsData, prop.name)) return
 
-        if (objectHas(prop, 'default')) {
-          let defaultValue = prop.default
-          // TODO: vue seems only checks the first type if it's an array?
-          const primaryType = isArray(prop.type) ? prop.type[0] : prop.type
-
-          // call factory function for non-Function types
-          if (
-            typeof defaultValue === 'function' &&
-            parsePropType(primaryType) !== 'Function'
-          ) {
-            defaultValue = prop.default.call(this.target)
-          }
-
-          this.$set(this.propsData, prop.name, defaultValue)
-        } else {
-          this.$set(this.propsData, prop.name, undefined)
-        }
+        this.$set(
+          this.propsData,
+          prop.name,
+          objectHas(prop, 'default')
+            ? parsePropDefault(this.target, prop.type, prop.default)
+            : undefined
+        )
       })
     },
     /**

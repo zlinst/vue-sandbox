@@ -6,6 +6,17 @@
         class="vue-sandbox-prop__header-name vue-sandbox-monofont"
         v-text="name"
       />
+      <!-- prop actions -->
+      <span
+        class="vue-sandbox-prop__header-action"
+        @click="editValue()"
+        v-text="'Edit'"
+      ></span>
+      <span
+        class="vue-sandbox-prop__header-action"
+        @click="resetValue()"
+        v-text="'Reset'"
+      ></span>
       <!-- prop types -->
       <div class="vue-sandbox-prop__header-types">
         <text-badge
@@ -56,7 +67,7 @@ import InputString from './inputs/InputString.vue'
 import InputBoolean from './inputs/InputBoolean.vue'
 import InputNumber from './inputs/InputNumber.vue'
 import InputUnknown from './inputs/InputUnknown.vue'
-import { isArray, parsePropType } from './shared.js'
+import { isArray, parsePropType, parsePropDefault } from './shared.js'
 
 export default {
   components: {
@@ -78,6 +89,11 @@ export default {
       type: [Function, Array, String],
       default: undefined,
     },
+    // prop default value
+    default: {
+      type: undefined,
+      default: undefined,
+    },
     // if the prop is the v-model
     isModel: {
       type: Boolean,
@@ -97,6 +113,11 @@ export default {
     unlisted: {
       type: Boolean,
       default: false,
+    },
+    // the Vue instance holds the prop
+    vm: {
+      type: Object,
+      default: undefined,
     },
   },
   data() {
@@ -161,6 +182,10 @@ export default {
     switchPropType(index) {
       this.typeIndex = index
     },
+    editValue() {},
+    resetValue() {
+      this.valueProxy = parsePropDefault(this.vm, this.type, this.default)
+    },
   },
 }
 </script>
@@ -175,6 +200,13 @@ export default {
 .vue-sandbox-prop__header-name {
   color: white;
   background-color: #264b6d;
+}
+
+.vue-sandbox-prop__header-action {
+  font-size: 0.75rem;
+  margin-left: 0.5em;
+  text-decoration: underline dotted;
+  cursor: pointer;
 }
 
 .vue-sandbox-prop__header-types {
