@@ -9,7 +9,7 @@
       <!-- prop actions -->
       <span
         class="vue-sandbox-prop__header-action"
-        @click="editMode = true"
+        @click="editMode = !editMode"
         v-text="'Edit'"
       >
       </span>
