@@ -1,6 +1,6 @@
 <template>
   <div class="vue-sandbox-unknown-input">
-    <code-block :content="serialisedValue" />
+    <code-block :content="serialisedValue" :max-lines="3" />
   </div>
 </template>
 
