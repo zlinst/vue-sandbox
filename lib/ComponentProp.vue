@@ -9,9 +9,10 @@
       <!-- prop actions -->
       <span
         class="vue-sandbox-prop__header-action"
-        @click="editValue()"
+        @click="editMode = true"
         v-text="'Edit'"
-      ></span>
+      >
+      </span>
       <span
         class="vue-sandbox-prop__header-action"
         @click="resetValue()"
@@ -46,16 +47,27 @@
     </div>
 
     <!-- input component -->
-    <div class="vue-sandbox-prop__input">
+    <div v-show="!editMode" class="vue-sandbox-prop__input">
       <slot>
         <component :is="inputComponent" v-model="valueProxy" />
       </slot>
     </div>
+
+    <!-- prop value editor -->
+    <prop-editor
+      v-if="editMode"
+      :value="value"
+      class="vue-sandbox-prop__editor"
+      autofocus
+      @input="(e) => updateValue(e)"
+      @cancel="editMode = false"
+    />
   </section>
 </template>
 
 <script>
 import TextBadge from './misc/TextBadge.vue'
+import PropEditor from './misc/PropEditor.vue'
 import InputString from './inputs/InputString.vue'
 import InputBoolean from './inputs/InputBoolean.vue'
 import InputNumber from './inputs/InputNumber.vue'
@@ -65,6 +77,7 @@ import { isArray, parsePropType, parsePropDefault } from './shared.js'
 export default {
   components: {
     TextBadge,
+    PropEditor,
   },
   props: {
     // prop value
@@ -116,6 +129,7 @@ export default {
   data() {
     return {
       typeIndex: 0,
+      editMode: false,
     }
   },
   computed: {
@@ -175,7 +189,10 @@ export default {
     switchPropType(index) {
       this.typeIndex = index
     },
-    editValue() {},
+    updateValue(value) {
+      this.editMode = false
+      this.valueProxy = value
+    },
     resetValue() {
       this.valueProxy = parsePropDefault(this.vm, this.type, this.default)
     },
@@ -245,6 +262,10 @@ export default {
 }
 
 .vue-sandbox-prop__input {
+  margin-top: 0.5em;
+}
+
+.vue-sandbox-prop__editor {
   margin-top: 0.5em;
 }
 </style>
