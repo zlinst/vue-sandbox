@@ -36,10 +36,7 @@ export const parsePropDefault = (vm, propType, propDefault) => {
   propType = isArray(propType) ? propType[0] : propType
 
   // call factory function for non-Function types
-  if (
-    isFunction(propDefault) === 'function' &&
-    parsePropType(propType) !== 'Function'
-  ) {
+  if (isFunction(propDefault) && parsePropType(propType) !== 'Function') {
     return propDefault.call(vm)
   }
 
