@@ -4,10 +4,10 @@
     <div class="vue-sandbox__header">
       <span class="vue-sandbox__header-title">{{ sandboxTitle }}</span>
       <span class="vue-sandbox__header-actions">
-        <button class="vue-sandbox__header-action-btn" @click="reload">
+        <button class="vue-sandbox__header-action-btn" @click="reload()">
           Reload
         </button>
-        <button class="vue-sandbox__header-action-btn" @click="reset">
+        <button class="vue-sandbox__header-action-btn" @click="reload(true)">
           Reset
         </button>
       </span>
@@ -22,6 +22,7 @@
       >
         <div
           v-if="!reloading"
+          :key="sandboxId"
           class="vue-sandbox__component"
           :style="{ visibility: ready ? 'visible' : 'hidden' }"
         >
@@ -40,7 +41,7 @@
       <div class="vue-sandbox__component-props">
         <div
           v-for="prop in propsList"
-          :key="prop.name"
+          :key="prop.key"
           :temp="(slotName = 'prop:' + prop.name)"
           class="vue-sandbox__component-prop"
         >
@@ -111,6 +112,10 @@ export default {
       targetId: 0,
       // if all the props and events of the target component are setup and ready to be shown
       ready: false,
+      // change this will force the $props list to re-render, useful when reset
+      // NOTE: the re-render won't happen immediately, it will happen when the props list are
+      // being re-built
+      propsId: 0,
 
       // tracks the height of the container of the target component
       targetHeight: undefined,
@@ -225,15 +230,6 @@ export default {
     component() {
       this.reset()
     },
-    sandboxId(newValue) {
-      // add a small deply to make the UI more responsive
-      setTimeout(() => {
-        // in case a new reload is issued
-        if (newValue === this.sandboxId) {
-          this.targetId = newValue
-        }
-      }, this.reloadDelay)
-    },
   },
   created() {
     this.resetPropsData()
@@ -268,6 +264,7 @@ export default {
       // loop prop from props definitions
       for (let propName in this.targetProps) {
         this.propsList.push({
+          key: this.propsId + '+' + propName,
           name: propName,
           type: undefined,
           isModel: propName === this.targetModel.prop,
@@ -277,13 +274,14 @@ export default {
         })
       }
 
-      // search for unlisted props, useful if target component uses $attrs
+      // search for unlisted props (defined by user), useful if target component uses $attrs
       for (let propName in this.props) {
         if (this.targetProps[propName] || !this.props[propName]) {
           return
         }
 
         this.propsList.push({
+          key: this.propsId + '+' + propName,
           name: propName,
           type: undefined,
           unlisted: true,
@@ -336,19 +334,24 @@ export default {
       this.propsData = { __sandboxed: true }
     },
     /**
-     * Re-mount the component without clearing the props data.
+     * Re-load the target component.
      */
-    reload() {
+    reload(resetProps) {
       // record current height
       this.targetHeight = this.getTargetHeight()
-      ++this.sandboxId
-    },
-    /**
-     * Re-mount the component and clear everything.
-     */
-    reset() {
-      this.reload()
-      this.resetPropsData()
+      const sandboxId = ++this.sandboxId
+
+      // add a small deply to make the UI more responsive
+      setTimeout(() => {
+        // check in case a new reload is issued
+        if (sandboxId !== this.sandboxId) return
+
+        if (resetProps) {
+          this.propsId++
+          this.resetPropsData()
+        }
+        this.targetId = sandboxId
+      }, this.reloadDelay)
     },
     /**
      * Find the target component by checking the unique $attr in child components.
