@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { checkPropEvalAllowed } from '../utils.js'
+import { stringify, checkPropEvalAllowed } from '../utils.js'
 
 const ALLOW_PROP_EVALUATION = checkPropEvalAllowed()
 
@@ -47,13 +47,37 @@ export default {
   },
   data() {
     return {
-      userInput: undefined,
       evalMode: ALLOW_PROP_EVALUATION,
+      localValue: undefined,
+
+      userInput: undefined,
     }
   },
   computed: {
     hasValue() {
       return !!this.userInput || typeof this.userInput !== 'undefined'
+    },
+    computedValue() {
+      try {
+        if (this.evalMode) {
+          return stringify(this.value, true)
+        } else {
+          return JSON.stringify(this.value, null, 2)
+        }
+      } catch (e) {
+        console.warn(e)
+        return ''
+      }
+    },
+  },
+  watch: {
+    computedValue: {
+      immediate: true,
+      handler(newValue) {
+        console.log('1')
+        if (newValue === this.userInput) return
+        this.userInput = newValue
+      },
     },
   },
   methods: {
@@ -68,11 +92,11 @@ export default {
       if (!this.hasValue) return
 
       try {
-        const value = this.evalMode
+        this.localValue = this.evalMode
           ? this.parseFromEval()
           : this.parseFromJson()
 
-        this.$emit('input', value)
+        this.$emit('input', this.localValue)
       } catch (e) {
         console.warn(e)
       }
