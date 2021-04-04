@@ -229,7 +229,7 @@ export default {
   },
   watch: {
     component() {
-      this.reset()
+      this.reload(true)
     },
   },
   created() {
