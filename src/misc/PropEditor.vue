@@ -74,7 +74,6 @@ export default {
     computedValue: {
       immediate: true,
       handler(newValue) {
-        console.log('1')
         if (newValue === this.userInput) return
         this.userInput = newValue
       },
