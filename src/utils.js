@@ -3,6 +3,7 @@ export const objectHas = (obj, key) => {
 }
 
 export const objectAssign = (obj, source) => {
+  // TODO: handle edge cases
   Object.keys(source).forEach((key) => {
     obj[key] = source[key]
   })
