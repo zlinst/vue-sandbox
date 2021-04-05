@@ -63,7 +63,7 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { objectHas } from './utils.js'
+import { objectHas, objectAssign } from './utils.js'
 import { getPropDefaultValue } from './props.js'
 
 export default {
@@ -174,25 +174,26 @@ export default {
     },
     /**
      * props *definition* of target component, includes props "inherited" from mixins.
+     *
+     * TODO: need to support nested mixins
+     * TODO: confirm the mixin execution order for props
      */
     targetProps() {
       if (!this.target) return {}
 
-      const targetProps = {}
+      const props = {}
       if (this.targetOptions.mixins) {
         this.targetOptions.mixins.forEach((mixin) => {
           if (!mixin.props) return
-          // TODO: confirm the inheritance order
-          // TODO: Object.assign does not work in IE, might need babel plugin to transpile?
-          Object.assign(targetProps, mixin.props)
+          objectAssign(props, mixin.props)
         })
       }
 
       if (this.targetOptions.props) {
-        Object.assign(targetProps, this.targetOptions.props)
+        objectAssign(props, this.targetOptions.props)
       }
 
-      return targetProps
+      return props
     },
     /**
      * The event listeners to be binded on the target component.

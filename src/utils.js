@@ -2,11 +2,21 @@ export const objectHas = (obj, key) => {
   return Object.prototype.hasOwnProperty.call(obj, key)
 }
 
+export const objectAssign = (obj, source) => {
+  Object.keys(source).forEach((key) => {
+    obj[key] = source[key]
+  })
+}
+
 export const isArray = (obj) => {
   if (typeof Array.isArray === 'undefined') {
     return Object.prototype.toString.call(obj) === '[object Array]'
   }
   return Array.isArray(obj)
+}
+
+export const isFunction = (obj) => {
+  return typeof obj === 'function'
 }
 
 export const stringify = (obj, pretty) => {
@@ -18,10 +28,6 @@ export const stringify = (obj, pretty) => {
     default:
       return String(obj)
   }
-}
-
-export const isFunction = (obj) => {
-  return typeof obj === 'function'
 }
 
 /**
