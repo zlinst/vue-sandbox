@@ -24,7 +24,7 @@ export const getPropDefaultValue = (vm, type, def) => {
   type = isArray(type) ? type[0] : type
 
   // call factory function for non-Function types
-  if (isFunction(def) && getPropTypeName(def) !== 'Function') {
+  if (isFunction(def) && getPropTypeName(type) !== 'Function') {
     return def.call(vm)
   }
 
