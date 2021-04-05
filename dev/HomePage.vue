@@ -1,8 +1,7 @@
 <template>
   <main>
-    <select v-model="selectedComponent" style="margin-bottom: 2em">
-      <option value="">-- Pick a component --</option>
-      <option v-for="comp in components" :key="comp.name" :value="comp.value">
+    <select v-model="selectedComponent" class="component-selector">
+      <option v-for="comp in components" :key="comp.name" :value="comp">
         {{ comp.name }}
       </option>
     </select>
@@ -12,7 +11,9 @@
 
 <script>
 import { ComponentSandbox } from '@lib'
-const libComponents = require.context('@lib', true, /\.vue$/)
+
+const libContext = require.context('@lib', true, /\.vue$/)
+const testContext = require.context('./components/test', true, /\.vue$/)
 
 export default {
   name: 'HomePage',
@@ -21,20 +22,44 @@ export default {
   },
   data() {
     return {
-      selectedComponent: '',
+      selectedComponent: undefined,
     }
   },
   computed: {
     components() {
-      return libComponents.keys().map((path) => ({
-        name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
-        value: path,
-      }))
+      return [
+        {
+          name: '===== Library Components =====',
+          path: '',
+        },
+        ...libContext.keys().map((path) => ({
+          name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
+          component: () => libContext(path).default,
+        })),
+        {
+          name: '===== Tests Components =====',
+          path: '',
+        },
+        ...testContext.keys().map((path) => ({
+          name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
+          component: () => testContext(path).default,
+        })),
+      ]
     },
     targetComponent() {
-      if (!this.selectedComponent) return undefined
-      return libComponents(this.selectedComponent).default
+      if (!this.selectedComponent || !this.selectedComponent.component) {
+        return undefined
+      }
+      return this.selectedComponent.component()
     },
   },
 }
 </script>
+
+<style scoped>
+.component-selector {
+  margin-bottom: 2rem;
+  font-family: inherit;
+  font-size: 1rem;
+}
+</style>
