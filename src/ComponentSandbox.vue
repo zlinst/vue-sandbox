@@ -266,13 +266,15 @@ export default {
       // loop prop from props definitions
       for (let propName in this.targetProps) {
         this.propsList.push({
-          key: this.propsId + '+' + propName,
+          // default
           name: propName,
           type: undefined,
-          isModel: propName === this.targetModel.prop,
+          // override
           ...this.targetProps[propName],
-          // allows override
           ...(this.props[propName] || {}),
+          // static
+          key: this.propsId + '+' + propName,
+          isModel: propName === this.targetModel.prop,
         })
       }
 
@@ -283,12 +285,15 @@ export default {
         }
 
         this.propsList.push({
+          // default
+          type: undefined,
+          // override
+          ...this.props[propName],
+          // static
           key: this.propsId + '+' + propName,
           name: propName,
-          type: undefined,
           unlisted: true,
           isModel: propName === this.targetModel.prop,
-          ...this.props[propName],
         })
       }
 
