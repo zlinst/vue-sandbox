@@ -1,23 +1,37 @@
 <template>
   <main>
-    <select v-model="selectedComponent" class="component-selector">
-      <option v-for="comp in components" :key="comp.name" :value="comp">
-        {{ comp.name }}
-      </option>
-    </select>
-    <component-sandbox v-if="targetComponent" :component="targetComponent" />
+    <component-select
+      style="margin-bottom: 2rem"
+      @select="
+        (c) => (selectedComponent = c.component ? c.component() : undefined)
+      "
+    />
+    <div v-if="selectedComponent">
+      <component-sandbox
+        v-if="selectedComponent.name === 'ComponentSandbox'"
+        :component="selectedComponent"
+      >
+        <template v-slot:prop:component="{ prop }">
+          <component-select
+            @select="
+              (c) => (prop.valueProxy = c.component ? c.component() : undefined)
+            "
+          />
+        </template>
+      </component-sandbox>
+      <component-sandbox v-else :component="selectedComponent" />
+    </div>
   </main>
 </template>
 
 <script>
+import ComponentSelect from './components/ComponentSelect.vue'
 import { ComponentSandbox } from '@lib'
-
-const libContext = require.context('@lib', true, /\.vue$/)
-const testContext = require.context('./components/test', true, /\.vue$/)
 
 export default {
   name: 'HomePage',
   components: {
+    ComponentSelect,
     ComponentSandbox,
   },
   data() {
@@ -25,41 +39,5 @@ export default {
       selectedComponent: undefined,
     }
   },
-  computed: {
-    components() {
-      return [
-        {
-          name: '===== Library Components =====',
-          path: '',
-        },
-        ...libContext.keys().map((path) => ({
-          name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
-          component: () => libContext(path).default,
-        })),
-        {
-          name: '===== Tests Components =====',
-          path: '',
-        },
-        ...testContext.keys().map((path) => ({
-          name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
-          component: () => testContext(path).default,
-        })),
-      ]
-    },
-    targetComponent() {
-      if (!this.selectedComponent || !this.selectedComponent.component) {
-        return undefined
-      }
-      return this.selectedComponent.component()
-    },
-  },
 }
 </script>
-
-<style scoped>
-.component-selector {
-  margin-bottom: 2rem;
-  font-family: inherit;
-  font-size: 1rem;
-}
-</style>
