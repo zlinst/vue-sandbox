@@ -279,7 +279,7 @@ export default {
       // search for unlisted props (defined by user), useful if target component uses $attrs
       for (let propName in this.props) {
         if (this.targetProps[propName] || !this.props[propName]) {
-          return
+          continue
         }
 
         this.propsList.push({
