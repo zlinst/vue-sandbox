@@ -1,36 +1,56 @@
 <template>
   <div class="vue-sandbox-propeditor">
-    <textarea
-      v-model="userInput"
-      :rows="rows"
-      class="vue-sandbox-monofont"
-      :autofocus="autofocus"
-      @keydown="handleKeyDown"
-    ></textarea>
-    <div class="vue-sandbox-propeditor__actions">
-      <button
-        class="vue-sandbox-propeditor__action-btn"
-        @click="$emit('cancel')"
+    <div class="vue-sandbox-propeditor__textarea-wrapper">
+      <textarea
+        v-model="userInput"
+        :rows="rows"
+        class="vue-sandbox-monofont"
+        :autofocus="autofocus"
+        @keydown="handleKeyDown"
       >
-        Cancel
-      </button>
-      <button
-        class="vue-sandbox-propeditor__action-btn"
-        :disabled="!hasValue"
-        @click="confirm()"
+      </textarea>
+      <text-badge
+        class="vue-sandbox-propeditor__mode"
+        @click="() => (evalMode = !evalMode)"
       >
-        {{ evalMode ? 'Evaluate' : 'Parse' }}
-      </button>
+        {{ evalMode ? 'Eval Mode' : 'JSON Mode' }}
+      </text-badge>
+    </div>
+    <div class="vue-sandbox-propeditor__footer">
+      <div
+        v-show="computedError"
+        class="vue-sandbox-propeditor__error"
+        v-text="computedError"
+      ></div>
+      <div class="vue-sandbox-propeditor__actions">
+        <button
+          class="vue-sandbox-propeditor__action-btn"
+          @click="$emit('cancel')"
+        >
+          Cancel
+        </button>
+        <button
+          class="vue-sandbox-propeditor__action-btn"
+          :disabled="!hasValue || !!computedError"
+          @click="confirm()"
+        >
+          Confirm
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import TextBadge from './TextBadge.vue'
 import { stringify, checkPropEvalAllowed } from '../utils.js'
 
 const ALLOW_PROP_EVALUATION = checkPropEvalAllowed()
 
 export default {
+  components: {
+    TextBadge,
+  },
   props: {
     value: {
       type: undefined,
@@ -51,6 +71,7 @@ export default {
       localValue: undefined,
 
       userInput: undefined,
+      error: null,
     }
   },
   computed: {
@@ -69,6 +90,12 @@ export default {
         return ''
       }
     },
+    computedError() {
+      if (this.error) return this.error
+      return !ALLOW_PROP_EVALUATION && this.evalMode
+        ? 'Eval mode is disabled by default for security reasons'
+        : ''
+    },
   },
   watch: {
     computedValue: {
@@ -77,6 +104,9 @@ export default {
         if (newValue === this.userInput) return
         this.userInput = newValue
       },
+    },
+    userInput() {
+      this.error = null
     },
   },
   methods: {
@@ -89,6 +119,7 @@ export default {
     },
     confirm() {
       if (!this.hasValue) return
+      this.error = null
 
       try {
         this.localValue = this.evalMode
@@ -97,6 +128,7 @@ export default {
 
         this.$emit('input', this.localValue)
       } catch (e) {
+        this.error = e.message || 'An error occured'
         console.warn(e)
       }
     },
@@ -105,7 +137,7 @@ export default {
     },
     parseFromEval() {
       if (!ALLOW_PROP_EVALUATION) {
-        throw new Error('PROP EVALUATION is disabled by default')
+        throw new Error('Eval mode is disabled')
       }
 
       return Function('"use strict";return (' + this.userInput + ')')()
@@ -115,14 +147,55 @@ export default {
 </script>
 
 <style>
-.vue-sandbox-propeditor textarea {
+.vue-sandbox-propeditor__textarea-wrapper {
+  position: relative;
+}
+
+.vue-sandbox-propeditor__textarea-wrapper > textarea {
   box-sizing: border-box;
   width: 100%;
   resize: vertical;
 }
 
+.vue-sandbox-propeditor__mode {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+  padding: 0.3em 0.75em;
+  border-radius: 0.3em;
+  color: #264b6d;
+  background-color: #f2f9ff;
+
+  cursor: pointer;
+  opacity: 0.1;
+  transition: opacity 2000ms cubic-bezier(1, 0, 0.6, 0.6);
+  will-change: opacity;
+}
+
+.vue-sandbox-propeditor__mode:hover {
+  opacity: 1;
+  transition: opacity 250ms cubic-bezier(0, 1, 0, 1);
+}
+
+.vue-sandbox-propeditor__footer {
+  margin-top: 0.25rem;
+  display: flex;
+}
+
+.vue-sandbox-propeditor__error {
+  color: #f84141;
+  font-size: 0.85rem;
+  padding-right: 1em;
+}
+
 .vue-sandbox-propeditor__actions {
-  text-align: right;
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 .vue-sandbox-propeditor__action-btn {
