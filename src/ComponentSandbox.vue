@@ -42,7 +42,7 @@
         <div
           v-for="prop in propsList"
           :key="prop.key"
-          :temp="(slotName = 'prop:' + prop.name)"
+          :data-slot-name="(slotName = 'prop:' + prop.name)"
           class="vue-sandbox__component-prop"
         >
           <component-prop v-model="prop.valueProxy" v-bind="prop" :vm="target">
