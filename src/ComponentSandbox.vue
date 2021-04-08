@@ -267,13 +267,13 @@ export default {
       for (let propName in this.targetProps) {
         this.propsList.push({
           // default
-          name: propName,
           type: undefined,
           // override
-          ...this.targetProps[propName],
           ...(this.props[propName] || {}),
+          ...this.targetProps[propName],
           // static
           key: this.propsId + '+' + propName,
+          name: propName,
           isModel: propName === this.targetModel.prop,
         })
       }
