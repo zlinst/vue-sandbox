@@ -1,11 +1,26 @@
 {
-  "name": "vue2-sandbox",
-  "version": "0.0.1",
-  "private": true,
-  "description": "A sandbox component for developing, testing and documenting other Vue components.",
-  "author": {
-    "name": "Lin"
+  "name": "@zlinst/vue2-sandbox",
+  "version": "0.1.0",
+  "private": false,
+  "description": "An interactive Vue component for previewing other Vue component on the fly.",
+  "author": "Lin <lin@caaus.me>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zlinst/vue-sandbox.git"
   },
+  "homepage": "https://github.com/zlinst/vue-sandbox#readme",
+  "bugs": {
+    "url": "https://github.com/zlinst/vue-sandbox/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "vuejs",
+    "vue",
+    "vue2",
+    "component",
+    "sandbox",
+    "preview"
+  ],
   "main": "src/index.js",
   "files": [
     "src"
@@ -30,6 +45,5 @@
     "prettier": "^2.2.1",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
-  },
-  "license": "MIT"
+  }
 }
