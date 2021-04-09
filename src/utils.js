@@ -9,6 +9,12 @@ export const objectAssign = (obj, source) => {
   })
 }
 
+export const objectUpdate = (obj, source) => {
+  Object.keys(obj).forEach((key) => {
+    obj[key] = source[key]
+  })
+}
+
 export const isArray = (obj) => {
   if (typeof Array.isArray === 'undefined') {
     return Object.prototype.toString.call(obj) === '[object Array]'
@@ -29,18 +35,4 @@ export const stringify = (obj, pretty) => {
     default:
       return String(obj)
   }
-}
-
-/**
- * Check if prop evaluation is allowed by looking up the environment variables.
- */
-export const checkPropEvalAllowed = () => {
-  if (!process && !process.env) {
-    return false
-  }
-
-  return (
-    process.env.VUE_APP_SANDBOX_PROP_EVAL === 'allow' ||
-    process.env.SANDBOX_PROP_EVAL === 'allow'
-  )
 }

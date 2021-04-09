@@ -43,9 +43,8 @@
 
 <script>
 import TextBadge from './TextBadge.vue'
-import { stringify, checkPropEvalAllowed } from '../utils.js'
-
-const ALLOW_PROP_EVALUATION = checkPropEvalAllowed()
+import { getConfig } from '../config.js'
+import { stringify } from '../utils.js'
 
 export default {
   components: {
@@ -67,7 +66,7 @@ export default {
   },
   data() {
     return {
-      evalMode: ALLOW_PROP_EVALUATION,
+      evalMode: false,
       localValue: undefined,
 
       userInput: undefined,
@@ -92,7 +91,7 @@ export default {
     },
     computedError() {
       if (this.error) return this.error
-      return !ALLOW_PROP_EVALUATION && this.evalMode
+      return !this.ENABLE_PROP_EVALUATION && this.evalMode
         ? 'Eval mode is disabled by default for security reasons'
         : ''
     },
@@ -108,6 +107,11 @@ export default {
     userInput() {
       this.error = null
     },
+  },
+  created() {
+    // no need to be reactive
+    this.ENABLE_PROP_EVALUATION = getConfig().enablePropEval
+    this.evalMode = this.ENABLE_PROP_EVALUATION
   },
   methods: {
     handleKeyDown(e) {
@@ -136,7 +140,7 @@ export default {
       return JSON.parse(this.userInput)
     },
     parseFromEval() {
-      if (!ALLOW_PROP_EVALUATION) {
+      if (!this.ENABLE_PROP_EVALUATION) {
         throw new Error('Eval mode is disabled')
       }
 
