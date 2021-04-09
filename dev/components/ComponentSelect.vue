@@ -21,7 +21,6 @@ export default {
       return [
         {
           name: '===== Library Components =====',
-          path: '',
         },
         ...libContext.keys().map((path) => ({
           name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
@@ -29,7 +28,6 @@ export default {
         })),
         {
           name: '===== Tests Components =====',
-          path: '',
         },
         ...testContext.keys().map((path) => ({
           name: path.replace(/^.*\/(\w+)\.vue$/, '$1'),
