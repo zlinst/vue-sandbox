@@ -1,4 +1,7 @@
 {
+  // supress the false warning: "File is a CommonJS module; it may be converted to an ES6 module."
+  // https://github.com/microsoft/vscode/issues/47299
+  "javascript.validate.enable": false,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
