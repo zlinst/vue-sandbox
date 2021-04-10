@@ -9,6 +9,6 @@
   // fix the not found warning in this file
   // https://stackoverflow.com/questions/63124462/how-to-fix-file-node-modules-dotenv-types-not-found-error-coming-from-j
   "typeAcquisition": {
-    "exclude": [ "dotenv" ]
+    "exclude": [ "dotenv", "source-map" ]
   }
 }
