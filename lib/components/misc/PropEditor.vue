@@ -43,8 +43,8 @@
 
 <script>
 import TextBadge from './TextBadge.vue'
-import { getConfig } from '../config.js'
-import { stringify } from '../utils.js'
+import { stringify } from '../../utils/helpers'
+import { getConfig } from '../../utils/configs'
 
 export default {
   components: {
@@ -91,7 +91,7 @@ export default {
     },
     computedError() {
       if (this.error) return this.error
-      return !this.ENABLE_PROP_EVALUATION && this.evalMode
+      return !this.ALLOW_PROP_EVAL && this.evalMode
         ? 'Eval mode is disabled by default for security reasons'
         : ''
     },
@@ -109,9 +109,10 @@ export default {
     },
   },
   created() {
-    // no need to be reactive
-    this.ENABLE_PROP_EVALUATION = getConfig().enablePropEval
-    this.evalMode = this.ENABLE_PROP_EVALUATION
+    // no need to be reactive, the reason why we don't store it as constants is the config is not
+    // initialised at the import time
+    this.ALLOW_PROP_EVAL = getConfig().allowPropEval
+    this.evalMode = this.ALLOW_PROP_EVAL
   },
   methods: {
     handleKeyDown(e) {
@@ -140,7 +141,7 @@ export default {
       return JSON.parse(this.userInput)
     },
     parseFromEval() {
-      if (!this.ENABLE_PROP_EVALUATION) {
+      if (!this.ALLOW_PROP_EVAL) {
         throw new Error('Eval mode is disabled')
       }
 

@@ -7,7 +7,7 @@
       "
     />
     <div v-if="selectedComponent">
-      <component-sandbox
+      <v-component-sandbox
         v-if="selectedComponent.name === 'ComponentSandbox'"
         :component="selectedComponent"
       >
@@ -18,21 +18,19 @@
             "
           />
         </template>
-      </component-sandbox>
-      <component-sandbox v-else :component="selectedComponent" />
+      </v-component-sandbox>
+      <v-component-sandbox v-else :component="selectedComponent" />
     </div>
   </main>
 </template>
 
 <script>
 import ComponentSelect from './components/ComponentSelect.vue'
-import { ComponentSandbox } from '@lib'
 
 export default {
   name: 'HomePage',
   components: {
     ComponentSelect,
-    ComponentSandbox,
   },
   data() {
     return {

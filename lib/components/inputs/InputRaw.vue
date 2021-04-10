@@ -6,7 +6,7 @@
 
 <script>
 import CodeBlock from '../misc/CodeBlock.vue'
-import { stringify } from '../utils.js'
+import { stringify } from '../../utils/helpers'
 
 export default {
   components: {

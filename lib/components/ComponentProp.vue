@@ -74,8 +74,8 @@
 import TextBadge from './misc/TextBadge.vue'
 import PropEditor from './misc/PropEditor.vue'
 import InputRaw from './inputs/InputRaw.vue'
-import { isArray } from './utils.js'
-import { getPropDefaultValue, resolvePropType } from './props.js'
+import { isArray } from '../utils/helpers'
+import { getPropDefaultValue, resolvePropType } from '../utils/props'
 
 export default {
   components: {

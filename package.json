@@ -23,10 +23,13 @@
   ],
   "main": "src/index.js",
   "files": [
-    "src"
+    "lib",
+    "dist"
   ],
   "scripts": {
-    "dev": "vue-cli-service serve dev/main.js"
+    "dev": "vue-cli-service serve",
+    "dev:production": "yarn build && vue-cli-service serve --mode production",
+    "build": "vue-cli-service build --target lib lib/index.js && shx rm dist/demo.html"
   },
   "peerDependencies": {
     "vue": "^2.6.11"
@@ -43,6 +46,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^2.2.1",
+    "shx": "^0.3.3",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
   }

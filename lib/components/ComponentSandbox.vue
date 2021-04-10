@@ -63,8 +63,8 @@
 
 <script>
 import ComponentProp from './ComponentProp.vue'
-import { objectHas, objectAssign } from './utils.js'
-import { getPropDefaultValue } from './props.js'
+import { objectHas, objectAssign } from '../utils/helpers'
+import { getPropDefaultValue } from '../utils/props'
 
 export default {
   name: 'ComponentSandbox',
@@ -150,7 +150,7 @@ export default {
       if (this.target._name) {
         return this.target._name.replace(/^<|>$/g, '')
       }
-      // or try extract from filename
+      // or try extract from filename (development mode only)
       if (this.targetOptions.__file) {
         const match = this.targetOptions.__file.match(/^.*?([^\\/]*)\.vue$/)
         if (match) {

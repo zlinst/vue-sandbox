@@ -7,7 +7,7 @@
 </template>
 
 <script>
-const libContext = require.context('@lib', true, /\.vue$/)
+const libContext = require.context('@lib-src', true, /\.vue$/)
 const testContext = require.context('./test', true, /\.vue$/)
 
 export default {
