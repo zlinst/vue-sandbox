@@ -21,7 +21,7 @@
     "sandbox",
     "preview"
   ],
-  "main": "src/index.js",
+  "main": "dist/vue2-sandbox.umd.min.js",
   "files": [
     "dist"
   ],
