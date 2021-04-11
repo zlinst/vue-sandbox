@@ -13,32 +13,32 @@
       </span>
     </div>
 
-    <div class="vue-sandbox__main">
+    <div class="vue-sandbox__main" :class="sandboxMainClass">
       <!-- target component -->
-      <div
-        ref="target"
-        class="vue-sandbox__component-wrapper"
-        :style="targetStyle"
-      >
+      <div ref="target" class="vue-sandbox__component vue-sandbox__main-chunk">
         <div
-          v-if="!reloading"
-          :key="sandboxId"
-          class="vue-sandbox__component"
-          :style="{ visibility: ready ? 'visible' : 'hidden' }"
+          class="vue-sandbox__component-wrapper"
+          :style="sandboxWrapperStyle"
         >
-          <slot v-bind="{ propsData, eventsData }">
-            <component
-              :is="component"
-              v-if="component"
-              v-bind="propsData"
-              v-on="eventsData"
-            />
-          </slot>
+          <div
+            v-if="!reloading"
+            :key="sandboxId"
+            :style="{ visibility: ready ? 'visible' : 'hidden' }"
+          >
+            <slot v-bind="{ propsData, eventsData }">
+              <component
+                :is="component"
+                v-if="component"
+                v-bind="propsData"
+                v-on="eventsData"
+              />
+            </slot>
+          </div>
         </div>
       </div>
 
       <!-- props of target component -->
-      <div class="vue-sandbox__component-props">
+      <div class="vue-sandbox__component-props vue-sandbox__main-chunk">
         <div
           v-for="prop in propsList"
           :key="prop.key"
@@ -94,6 +94,10 @@ export default {
       type: Number,
       default: 350,
     },
+    split: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -114,8 +118,8 @@ export default {
       // if all the props and events of the target component are setup and ready to be shown
       ready: false,
       // change this will force the $props list to re-render, useful when reset
-      // NOTE: the re-render won't happen immediately, it will happen when the props list are
-      // being re-built
+      // NOTE: the re-render won't happen immediately, it will happen the next time the props list
+      // are being re-built
       propsId: 0,
 
       // tracks the height of the container of the target component
@@ -218,7 +222,7 @@ export default {
       }
     },
     // used for keeping the height of target component container during reloading
-    targetStyle() {
+    sandboxWrapperStyle() {
       if (this.targetHeight && this.reloading) {
         return {
           'min-height': this.targetHeight,
@@ -226,6 +230,9 @@ export default {
       }
 
       return {}
+    },
+    sandboxMainClass() {
+      return this.split ? 'vue-sandbox__main__split' : ''
     },
   },
   watch: {
@@ -432,6 +439,15 @@ export default {
 
 .vue-sandbox__main {
   position: relative;
+}
+
+.vue-sandbox__main__split {
+  display: flex;
+}
+
+.vue-sandbox__main__split .vue-sandbox__main-chunk {
+  width: 50%;
+  overflow: auto;
 }
 
 .vue-sandbox__component-wrapper {

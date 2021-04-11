@@ -1,15 +1,22 @@
 <template>
   <main>
-    <component-select
-      style="margin-bottom: 2rem"
-      @select="
-        (c) => (selectedComponent = c.component ? c.component() : undefined)
-      "
-    />
+    <div>
+      <div>Pick a component</div>
+      <component-select
+        @select="
+          (c) => (selectedComponent = c.component ? c.component() : undefined)
+        "
+      />
+    </div>
+    <div style="margin-bottom: 2rem">
+      <input v-model="splitMode" type="checkbox" />
+      <span>Split Mode</span>
+    </div>
     <div v-if="selectedComponent">
       <v-component-sandbox
         v-if="selectedComponent.name === 'ComponentSandbox'"
         :component="selectedComponent"
+        :split="splitMode"
       >
         <template v-slot:prop:component="{ prop }">
           <component-select
@@ -19,7 +26,11 @@
           />
         </template>
       </v-component-sandbox>
-      <v-component-sandbox v-else :component="selectedComponent" />
+      <v-component-sandbox
+        v-else
+        :component="selectedComponent"
+        :split="splitMode"
+      />
     </div>
   </main>
 </template>
@@ -35,6 +46,7 @@ export default {
   data() {
     return {
       selectedComponent: undefined,
+      splitMode: true,
     }
   },
 }
