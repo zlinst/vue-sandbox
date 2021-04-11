@@ -2,6 +2,8 @@
 
 **vue2-sandbox** provides a customisable and interactive component for previewing Vue component on the fly which can be useful for testing or demostration.
 
+Check the demo [here](https://zlinst.github.io/vue-sandbox/).
+
 ## This project is still under active development.
 
 ## Installation
