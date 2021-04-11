@@ -27,9 +27,10 @@
   ],
   "scripts": {
     "dev": "vue-cli-service serve",
-    "dev:production": "yarn run build && vue-cli-service serve --mode production",
-    "build": "vue-cli-service build --target lib lib/index.js && shx rm dist/demo.html",
-    "publish:npm": "yarn run build && npm publish --access public"
+    "dev:production": "yarn run build:lib && cross-env VUE_SANDBOX_ENV=production vue-cli-service serve",
+    "build:lib": "vue-cli-service build --target lib lib/index.js && shx rm dist/demo.html",
+    "build:demo": "vue-cli-service build",
+    "publish:npm": "yarn run build:lib && npm publish --access public"
   },
   "peerDependencies": {
     "vue": "^2.6.11"
