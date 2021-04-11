@@ -21,7 +21,7 @@ export default {
 </script>
 
 <style>
-.vue-sandbox-string-input textarea {
+.vue-sandbox-string-input > textarea {
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;

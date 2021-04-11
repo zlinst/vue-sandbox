@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style>
-.vue-sandbox-number-input input {
+.vue-sandbox-number-input > input {
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;

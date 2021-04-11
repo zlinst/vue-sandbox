@@ -164,10 +164,10 @@ export default {
   text-align: center;
 }
 
-.vue-sandbox-codeblock.folded .vue-sandbox-codeblock__fold-toggle {
+.vue-sandbox-codeblock.folded > .vue-sandbox-codeblock__fold-toggle {
   background-color: #e8bd32;
 }
-.vue-sandbox-codeblock.expanded .vue-sandbox-codeblock__fold-toggle {
+.vue-sandbox-codeblock.expanded > .vue-sandbox-codeblock__fold-toggle {
   background-color: #7ed6b4;
 }
 </style>

@@ -445,7 +445,7 @@ export default {
   display: flex;
 }
 
-.vue-sandbox__main__split .vue-sandbox__main-chunk {
+.vue-sandbox__main__split > .vue-sandbox__main-chunk {
   width: 50%;
   overflow: auto;
 }
