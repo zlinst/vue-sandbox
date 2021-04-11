@@ -4,6 +4,54 @@
 
 ## This project is still under active development.
 
+## Installation
+
+```shell
+npm install --save @zlinst/vue2-sandbox
+```
+
+## Configuration
+
+Use `Vue.use` to register components:
+
+```javascript
+import Vue from 'vue'
+import VueSandbox from '@zlinst/vue2-sandbox'
+
+Vue.use(VueSandbox)
+```
+
+Or do it manually:
+
+```javascript
+import Vue from 'vue'
+import { ComponentSandbox } from '@zlinst/vue2-sandbox'
+
+Vue.component('component-sandbox', ComponentSandbox)
+```
+
+You can also pass options to `Vue.use` for further customisation:
+
+```javascript
+Vue.use(VueSandbox, {
+  allowPropEval: process.env.NODE_ENV === 'development',
+  registerComponents: true,
+  componentPrefix: 'v',
+})
+```
+
+Available options are:
+
+| Option | Description | Default |
+|:-:|---|:-:|
+| `allowPropEval` | When set to `true`, we can set prop value using JavaScript code instead of JSON, it uses `Function(...)` underneath for value evaluation, this is turned off by default for security concerns. | `false` |
+| `registerComponents` | Set to `false` if you want to register components manually. | `true` |
+| `componentPrefix` | Append a prefix to component names when `registerComponents` is `true`, for example: set it to `'v'` allows you to use component as: `<v-component-sandbox ... />` | `''` |
+
+### Note for Nuxt.js
+
+> If you use Nuxt plugin to configure this package, you might need to set the plugin mode to client.
+
 ## Basic Usage
 
 ### Use the `component` prop:
@@ -17,8 +65,10 @@
 import FooComponent from './components/FooComponent.vue'
 
 export default {
-  components: {
-    FooComponent,
+  data() {
+    return {
+      FooComponent,
+    }
   },
 }
 </script>
@@ -67,9 +117,13 @@ import FormUserId from './components/FormUserId.vue'
 
 export default {
   components: {
-    UserProfile,
     FormUserId,
   },
+  data() {
+    return {
+      UserProfile,
+    }
+  }
 }
 </script>
 ```
@@ -95,26 +149,3 @@ Sometimes we use `$attrs` to pass non-prop attributes to child component, we can
 // ... omitted
 </script>
 ```
-
-Or make it fancier:
-
-```vue
-<template>
-  <component-sandbox
-    :component="FooComponent"
-    :props="BarComponent.$props"
-  />
-</template>
-
-<script>
-import BarComponent from './component/BarComponent.vue'
-
-// ... omitted
-</script>
-```
-
-### Eval Mode
-
-The "edit" button next to the prop name allows us to set the prop value using JSON, we can also use eval mode for data that is not supported by JSON, such as `Function`.
-
-This feature is disabled by default, and requires manual activation for security reasons.
